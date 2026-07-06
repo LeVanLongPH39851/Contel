@@ -17,7 +17,14 @@ export const ProgramHealthScorecard = {
                         ]
                     },
                     {
-                        "col": "date",
+                        "col": "filter_w",
+                        "op": "NOT IN",
+                        "val": [
+                            "1 weeks"
+                        ]
+                    },
+                    {
+                        "col": "start_of_week",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
                     }
@@ -67,7 +74,7 @@ export const ProgramHealthScorecard = {
                 },
                 "order_desc": true,
                 "url_params": {
-                    "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
                 },
                 "custom_params": {},
                 "custom_form_data": {},
@@ -80,7 +87,7 @@ export const ProgramHealthScorecard = {
             "viz_type": "table",
             "slice_id": 934,
             "url_params": {
-                "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
             },
             "query_mode": "aggregate",
             "groupby": [
@@ -92,16 +99,33 @@ export const ProgramHealthScorecard = {
                 "Lead-in Effect",
                 "last_4_week"
             ],
-            "temporal_columns_lookup": {},
+            "temporal_columns_lookup": {
+                "start_of_week": true
+            },
             "all_columns": [],
             "percent_metrics": [],
             "adhoc_filters": [
                 {
                     "clause": "WHERE",
+                    "comparator": [
+                        "1 weeks"
+                    ],
+                    "datasourceWarning": false,
+                    "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_cb0n582xonc_s2ltgwnjbm",
+                    "isExtra": false,
+                    "isNew": false,
+                    "operator": "NOT IN",
+                    "operatorId": "NOT_IN",
+                    "sqlExpression": null,
+                    "subject": "filter_w"
+                },
+                {
+                    "clause": "WHERE",
                     "comparator": "No filter",
                     "expressionType": "SIMPLE",
                     "operator": "TEMPORAL_RANGE",
-                    "subject": "date"
+                    "subject": "start_of_week"
                 }
             ],
             "timeseries_limit_metric": {
@@ -119,7 +143,22 @@ export const ProgramHealthScorecard = {
             "server_page_length": 10,
             "order_desc": true,
             "table_timestamp_format": "smart_date",
+            "include_search": true,
             "allow_render_html": true,
+            "column_config": {
+                "Content Health Score": {
+                    "d3NumberFormat": ",d"
+                },
+                "Lead-in Effect": {
+                    "d3NumberFormat": ",d"
+                },
+                "Return Viewer Rate": {
+                    "d3NumberFormat": ",d"
+                },
+                "Watch Time Efficiency": {
+                    "d3NumberFormat": ",d"
+                }
+            },
             "show_cell_bars": true,
             "color_pn": true,
             "comparison_color_scheme": "Green",
@@ -143,8 +182,11 @@ export const ProgramHealthScorecard = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
+                "AVG(Watch Time Efficiency)": "#1FA8C9",
                 "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9",
+                "REVIEW": "#454E7C",
+                "MAINTAIN": "#5AC189"
             },
             "extra_filters": [],
             "force": false,

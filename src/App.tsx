@@ -1,21 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import { useDashboardData } from './hooks/useDashboardData';
 import { switchTab, loadProgram, selectProgram, init, drawSparkline } from "./utils/App";
+import { DashboardFilterProvider } from './context/DashboardFilterContext';
+import { useDashboardFilters } from './context/DashboardFilterContext';
+import { toSlug } from './helpers/helper';
 
-function App() {
+function DashboardContent() {
   const dashboard = useDashboardData();
-
-  const AvgHealthScore = dashboard.isLoading.AvgHealthScore ? null : dashboard?.AvgHealthScore?.data?.[dashboard.AvgHealthScore.data.length - 1]?.['AVG(content_health_score) *100']?.toFixed(2);
-  const AvgHealthScoreDelta = dashboard.isLoading.AvgHealthScore ? null : ((dashboard.AvgHealthScore.data[dashboard.AvgHealthScore.data.length - 1]['AVG(content_health_score) *100'] - dashboard.AvgHealthScore.data[dashboard.AvgHealthScore.data.length - 2]['AVG(content_health_score) *100']) * 100 / dashboard.AvgHealthScore.data[dashboard.AvgHealthScore.data.length - 2]['AVG(content_health_score) *100']).toFixed(2);
-  const AvgRetentionRate = dashboard.isLoading.AvgRetentionRate ? null : dashboard?.AvgRetentionRate?.data?.[dashboard.AvgRetentionRate.data.length - 1]?.['AVG(watch_time_efficiency)']?.toFixed(2);
-  const AvgRetentionRateDelta = dashboard.isLoading.AvgRetentionRate ? null : ((dashboard.AvgRetentionRate.data[dashboard.AvgRetentionRate.data.length - 1]['AVG(watch_time_efficiency)'] - dashboard.AvgRetentionRate.data[dashboard.AvgRetentionRate.data.length - 2]['AVG(watch_time_efficiency)']) * 100 / dashboard.AvgRetentionRate.data[dashboard.AvgRetentionRate.data.length - 2]['AVG(watch_time_efficiency)']).toFixed(2);
-  const programSTRENGTHEN = dashboard.isLoading.programSTRENGTHEN ? null : dashboard?.programSTRENGTHEN?.data?.[dashboard.programSTRENGTHEN.data.length - 1]?.['COUNT(status)'] || 0;
-  const programSTRENGTHENDelta = dashboard.isLoading.programSTRENGTHEN ? null : (dashboard.programSTRENGTHEN?.data?.[dashboard.programSTRENGTHEN.data.length - 1]?.['COUNT(status)'] - dashboard.programSTRENGTHEN?.data?.[dashboard.programSTRENGTHEN.data.length - 2]?.['COUNT(status)']) || 0;
-  const programATRISK = dashboard.isLoading.programATRISK ? null : dashboard?.programATRISK?.data?.[dashboard.programATRISK.data.length - 1]?.['COUNT(status)'];
-  const programATRISKDelta = dashboard.isLoading.programATRISK ? null : (dashboard.programATRISK.data[dashboard.programATRISK.data.length - 1]['COUNT(status)'] - dashboard.programATRISK.data[dashboard.programATRISK.data.length - 2]['COUNT(status)']);
-  const AvgReturnViewerRate = dashboard.isLoading.AvgReturnViewerRate ? null : dashboard?.AvgReturnViewerRate?.data?.[dashboard.AvgReturnViewerRate.data.length - 1]?.['AVG(return_viewer_rate)*100']?.toFixed(2);
-  const AvgReturnViewerRateDelta = dashboard.isLoading.AvgReturnViewerRate ? null : ((dashboard.AvgReturnViewerRate.data[dashboard.AvgReturnViewerRate.data.length - 1]['AVG(return_viewer_rate)*100'] - dashboard.AvgReturnViewerRate.data[dashboard.AvgReturnViewerRate.data.length - 2]['AVG(return_viewer_rate)*100']) * 100 / dashboard.AvgReturnViewerRate.data[dashboard.AvgReturnViewerRate.data.length - 2]['AVG(return_viewer_rate)*100']).toFixed(2);
+  const { appliedFilters, setAppliedFilters } = useDashboardFilters();
+  const AvgHealthScore = dashboard.isLoading.AvgHealthScore ? null : dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)']?.toFixed(2);
+  const AvgHealthScoreDelta = dashboard.isLoading.AvgHealthScore ? null : ((dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)'] - dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)']) * 100 / dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)'])?.toFixed(2);
+  const AvgRetentionRate = dashboard.isLoading.AvgRetentionRate ? null : dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 1]?.['AVG(Watch Time Efficiency)']?.toFixed(2);
+  const AvgRetentionRateDelta = dashboard.isLoading.AvgRetentionRate ? null : ((dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 1]?.['AVG(Watch Time Efficiency)'] - dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 2]?.['AVG(Watch Time Efficiency)']) * 100 / dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 2]?.['AVG(Watch Time Efficiency)'])?.toFixed(2);
+  const programSTRENGTHEN = dashboard.isLoading.programSTRENGTHEN ? null : dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 1]?.['COUNT(status)'] || 0;
+  const programSTRENGTHENDelta = dashboard.isLoading.programSTRENGTHEN ? null : (dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 1]?.['COUNT(status)'] - dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 2]?.['COUNT(status)']) || 0;
+  const programATRISK = dashboard.isLoading.programATRISK ? null : dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'];
+  const programATRISKDelta = dashboard.isLoading.programATRISK ? null : (dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'] - dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 2]?.['COUNT(status)']);
+  const AvgReturnViewerRate = dashboard.isLoading.AvgReturnViewerRate ? null : dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 1]?.['AVG(Return Viewer Rate)']?.toFixed(2);
+  const AvgReturnViewerRateDelta = dashboard.isLoading.AvgReturnViewerRate ? null : ((dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 1]?.['AVG(Return Viewer Rate)'] - dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 2]?.['AVG(Return Viewer Rate)']) * 100 / dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 2]?.['AVG(Return Viewer Rate)'])?.toFixed(2);
   // ── Sparkline data ──
   const sparkData = {
     ...(dashboard.isLoading.ProgramHealthScorecard ? {} : dashboard?.ProgramHealthScorecard?.data?.reduce((acc: any, item: any) => {
@@ -23,13 +26,41 @@ function App() {
       return acc;
     }, {}))
   };
+  const [isChannel, setIsChannel] = useState(true)
+  const program = appliedFilters?.programs?.[0] || 'THỜI SỰ 19H';
+  // ── Program data ──
+  const programs = useMemo(() => ({
+    [toSlug(program)]: {
+      name: program, score: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0), status: dashboard.isLoading.ProgramInfor ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 75 ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 55 ? 'maintain' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 35 ? 'review' : 'at-risk', slot: '',
+      ret: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0), rv: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0), li: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0), retColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', rvColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', liColor: dashboard.isLoading.ProgramInfor ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)',
+      insight: '',
+      curveTitle: `Drop-off Curve · ${program}`,
+      curveNote: '',
+      episodes: dashboard.isLoading.WatchTimeEfficiencyLast8Weeks ? [0, 0, 0, 0, 0, 0, 0, 0] : dashboard?.WatchTimeEfficiencyLast8Weeks?.data?.map((item: any) => (item["AVG(Watch Time Efficiency)"] || 0).toFixed(1)),
+      epNote: '',
+      rvr: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(1) + '%', rvrSub: '',
+      loyal: dashboard.isLoading.AverageDropOffByMinute ? 'Loading...' : dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"]?.toFixed(1) + '%', loyalSub: '',
+      newv: dashboard.isLoading.ProgramInfor ? 'Loading...' : (100 - dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0)?.toFixed(1) + '%', newSub: '',
+      leadin: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(1) + '%', leadinSub: '',
+      epTitle: `📈 Retention Trend theo tập · 8 tập gần nhất · ${program}`,
+    }
+  }), [program, dashboard.isLoading.ProgramInfor, dashboard.isLoading.AverageDropOffByMinute, dashboard.isLoading.WatchTimeEfficiencyLast8Weeks]);
 
   useEffect(() => {
     if (!dashboard.isLoading.ProgramHealthScorecard) {
       Object.keys(sparkData).forEach(k => drawSparkline(k, sparkData[k].d, sparkData[k].c));
-      init();
+      init(programs);
     }
-  }, [dashboard.isLoading.ProgramHealthScorecard]);
+  }, [dashboard.isLoading.ProgramHealthScorecard, programs]);
+
+  const [selectedProgramSlug, setSelectedProgramSlug] = useState(null);
+
+  useEffect(() => {
+    if (selectedProgramSlug) {
+      selectProgram(selectedProgramSlug, programs);
+    }
+  }, [programs && !isChannel, selectedProgramSlug]);
+
   return (
     <>
       {/* <!-- NAV --> */}
@@ -39,7 +70,13 @@ function App() {
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
         <div className="nav-right">
-          <div className="nav-channel">VTV1</div>
+          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters === null || appliedFilters?.channels?.[0] === 'VTV1' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); setIsChannel(true) }}>VTV1</div>
+          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); setIsChannel(true) }}>VTV2</div>
+          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); setIsChannel(true) }}>VTV3</div>
+          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); setIsChannel(true) }}>VTV4</div>
+          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); setIsChannel(true) }}>VTV5</div>
+          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); setIsChannel(true) }}>VTV6</div>
+          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); setIsChannel(true) }}>VTV8</div>
           <div className="nav-date"><span className="live-dot"></span>Cập nhật 08/05/2026 · 09:00</div>
         </div>
       </nav>
@@ -47,11 +84,11 @@ function App() {
       {/* <!-- HEADER --> */}
       <div className="header-strip">
         <div>
-          <div className="header-title">Sức khỏe <span>Nội dung</span> VTV1</div>
+          <div className="header-title">Sức khỏe <span>Nội dung</span> {appliedFilters?.channels?.[0] || 'VTV1'}</div>
           <div className="header-sub">Tuần 19 · 28/4 – 4/5/2026 · 24 chương trình đang theo dõi</div>
         </div>
         <div className="header-divider"></div>
-        <div className="header-meta"><strong>Kênh</strong>VTV1</div>
+        <div className="header-meta"><strong>Kênh</strong>{appliedFilters?.channels?.[0] || 'VTV1'}</div>
         <div className="header-divider"></div>
         <div className="header-meta"><strong>Nguồn data</strong>VTVgo Behavioral · EPG Sync</div>
         <div className="header-divider"></div>
@@ -79,7 +116,7 @@ function App() {
             <div className="sum-card">
               <div className="sum-label">Avg Health Score · Kênh</div>
               <div className="sum-val amber">{dashboard.isLoading.AvgHealthScore ? 'Loading...' : AvgHealthScore}</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgHealthScore ? 'down' : AvgHealthScoreDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgHealthScore ? 'Loading...' : AvgHealthScoreDelta > 0 ? '↑ +' + AvgHealthScoreDelta : '↓ ' + AvgHealthScoreDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgHealthScore ? 'down' : Number(AvgHealthScoreDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgHealthScore ? 'Loading...' : Number(AvgHealthScoreDelta) > 0 ? '↑ +' + AvgHealthScoreDelta : '↓ ' + AvgHealthScoreDelta} vs tuần trước</div>
               {/* <div className="sum-sub">Mức MAINTAIN — theo dõi sát</div> */}
             </div>
             <div className="sum-card">
@@ -97,13 +134,13 @@ function App() {
             <div className="sum-card">
               <div className="sum-label">Avg Retention Rate</div>
               <div className="sum-val text">{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : AvgRetentionRate}%</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgRetentionRate ? 'down' : AvgRetentionRateDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : AvgRetentionRateDelta > 0 ? '↑ +' + AvgRetentionRateDelta : '↓ ' + AvgRetentionRateDelta}pp</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgRetentionRate ? 'down' : Number(AvgRetentionRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : Number(AvgRetentionRateDelta) > 0 ? '↑ +' + AvgRetentionRateDelta : '↓ ' + AvgRetentionRateDelta}pp</div>
               {/* <div className="sum-sub">Cuối chương trình · avg VTV1</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label">Avg Return Viewer Rate</div>
               <div className="sum-val green">{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : AvgReturnViewerRate}%</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgReturnViewerRate ? 'down' : AvgReturnViewerRateDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : AvgReturnViewerRateDelta > 0 ? '↑ +' + AvgReturnViewerRateDelta : '↓ ' + AvgReturnViewerRateDelta}pp</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgReturnViewerRate ? 'down' : Number(AvgReturnViewerRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : Number(AvgReturnViewerRateDelta) > 0 ? '↑ +' + AvgReturnViewerRateDelta : '↓ ' + AvgReturnViewerRateDelta}pp</div>
               {/* <div className="sum-sub">Device đã xem tuần trước quay lại</div> */}
             </div>
           </div>
@@ -133,7 +170,7 @@ function App() {
                   <tbody>
                     {/* <!-- STRENGTHEN --> */}
                     {dashboard.ProgramHealthScorecard.data.map((program: any) => (
-                      <tr onClick={() => selectProgram('thoi-su')} style={{ cursor: 'pointer' }}>
+                      < tr onClick={() => { setAppliedFilters({ ...appliedFilters, programs: [program.program_name] }); setIsChannel(false); setSelectedProgramSlug(toSlug(program.program_name)); }} style={{ cursor: 'pointer' }}>
                         <td style={{ paddingLeft: '16px' }}>
                           <div className="prog-name">{program.program_name}</div>
                           {/* <div className="prog-slot">19:00 – 19:30 · Hàng ngày</div> */}
@@ -141,17 +178,17 @@ function App() {
                         </td>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program.status === 'STRENGTHEN' ? '#00e5a0' : program.status === 'MAINTAIN' ? '#3d8bff' : program.status === 'REVIEW' ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score'].toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program.status === 'STRENGTHEN' ? 'var(--green)' : program.status === 'MAINTAIN' ? 'var(--blue)' : program.status === 'REVIEW' ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score'].toFixed(0)}</div></div>
+                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program.status === 'STRENGTHEN' ? '#00e5a0' : program.status === 'MAINTAIN' ? '#3d8bff' : program.status === 'REVIEW' ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program.status === 'STRENGTHEN' ? 'var(--green)' : program.status === 'MAINTAIN' ? 'var(--blue)' : program.status === 'REVIEW' ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
                           </div>
                         </td>
                         <td><span className={`badge ${program.status.toLowerCase().replace(' ', '-')}`}>{program.status}</span></td>
-                        <td><div className={`metric-num ${program['Watch Time Efficiency'].toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency'].toFixed(1) > 60 ? 'text' : program['Watch Time Efficiency'].toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency'].toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'text' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">↑ +1.4pp</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Return Viewer Rate'].toFixed(1) > 55 ? 'green' : program['Return Viewer Rate'].toFixed(1) > 45 ? 'text' : program['Return Viewer Rate'].toFixed(1) > 30 ? 'amber' : 'red'}`}>{program['Return Viewer Rate'].toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 55 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 45 ? 'text' : program['Return Viewer Rate']?.toFixed(1) > 30 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">Loyal base cao</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in Effect'].toFixed(1) > 70 ? 'green' : program['Lead-in Effect'].toFixed(1) > 35 ? 'text' : program['Lead-in Effect'].toFixed(1) > 18 ? 'amber' : 'red'}`}>{program['Lead-in Effect'].toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 35 ? 'text' : program['Lead-in Effect']?.toFixed(1) > 18 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">→ Phim VTV1 20h</div> */}
                         </td>
                         <td><div className="sparkline" id={`${program.program_name}`}></div></td>
@@ -334,12 +371,12 @@ function App() {
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '9px', color: 'var(--text-3)' }}>Audience thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra'].toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.PrimeTimeChain19h0022h30.data.length - 1 &&
                             <><div style={{ textAlign: 'center', fontSize: '18px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem'].toFixed(0)}% audience tiếp tục xem</div></>
+                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% audience tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -416,12 +453,12 @@ function App() {
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '9px', color: 'var(--text-3)' }}>Audience thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra'].toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.MorningBlock06h3009h00.data.length - 1 &&
                             <><div style={{ textAlign: 'center', fontSize: '18px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem'].toFixed(0)}% audience tiếp tục xem</div></>
+                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% audience tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -507,7 +544,7 @@ function App() {
                 </div>
                 <div className="mini-kpi">
                   <div className="mk-label">Bleed rate TB toàn kênh</div>
-                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"].toFixed(0) > 70 ? 'red' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"].toFixed(0) > 50 ? 'amber' : 'green'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"].toFixed(0)}%</div>
+                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 70 ? 'red' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 50 ? 'amber' : 'green'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0)}%</div>
                   {/* <div className="mk-sub">↑ +3pp vs tuần trước</div> */}
                 </div>
                 <div className="mini-kpi">
@@ -517,7 +554,7 @@ function App() {
                 </div>
                 <div className="mini-kpi">
                   <div className="mk-label">Rủi ro chain reaction</div>
-                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"].toFixed(0) > 70 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"].toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]} điểm</div>
+                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]?.toFixed(0) > 70 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]?.toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]} điểm</div>
                   {/* <div className="mk-sub">Prime time 22h & Trưa 12h</div> */}
                 </div>
               </div>
@@ -652,17 +689,17 @@ function App() {
                 <div style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '4px' }} id="prog-slot">20:00 – 21:00 · T2–T6</div>
                 <div className="hs-components">
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Retention (40%)</div>
+                    <div className="hs-comp-label">Retention(40%)</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-ret" style={{ width: '77%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-ret">77%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Return Viewer (35%)</div>
+                    <div className="hs-comp-label">Return-Viewer(35%)</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-rv" style={{ width: '69%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-rv">69%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Lead-in (25%)</div>
+                    <div className="hs-comp-label">Lead-in(25%)</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-li" style={{ width: '74%', background: 'var(--cyan)' }}></div></div>
                     <div className="hs-comp-val" id="val-li">74%</div>
                   </div>
@@ -678,44 +715,69 @@ function App() {
                 <svg width="100%" height="180" viewBox="0 0 700 180" preserveAspectRatio="none" id="retention-curve">
                   <defs>
                     <linearGradient id="rg1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#00e5a0" stop-opacity=".15" />
-                      <stop offset="100%" stop-color="#00e5a0" stop-opacity=".01" />
+                      <stop offset="0%" stopColor="#00e5a0" stopOpacity=".15" />
+                      <stop offset="100%" stopColor="#00e5a0" stopOpacity=".01" />
                     </linearGradient>
                   </defs>
                   {/* <!-- grid --> */}
-                  <line x1="0" y1="0" x2="700" y2="0" stroke="#1c2130" stroke-width="1" />
-                  <line x1="0" y1="45" x2="700" y2="45" stroke="#1c2130" stroke-width="1" />
-                  <line x1="0" y1="90" x2="700" y2="90" stroke="#1c2130" stroke-width="1" />
-                  <line x1="0" y1="135" x2="700" y2="135" stroke="#1c2130" stroke-width="1" />
-                  <line x1="0" y1="180" x2="700" y2="180" stroke="#1c2130" stroke-width="1" />
+                  <line x1="0" y1="0" x2="700" y2="0" stroke="#1c2130" strokeWidth="1" />
+                  <line x1="0" y1="45" x2="700" y2="45" stroke="#1c2130" strokeWidth="1" />
+                  <line x1="0" y1="90" x2="700" y2="90" stroke="#1c2130" strokeWidth="1" />
+                  <line x1="0" y1="135" x2="700" y2="135" stroke="#1c2130" strokeWidth="1" />
+                  <line x1="0" y1="180" x2="700" y2="180" stroke="#1c2130" strokeWidth="1" />
                   {/* <!-- labels --> */}
-                  <text x="4" y="10" fill="#2a3050" font-size="9" font-family="monospace">100%</text>
-                  <text x="4" y="55" fill="#2a3050" font-size="9" font-family="monospace">75%</text>
-                  <text x="4" y="100" fill="#2a3050" font-size="9" font-family="monospace">50%</text>
-                  <text x="4" y="145" fill="#2a3050" font-size="9" font-family="monospace">25%</text>
+                  <text x="4" y="10" fill="#2a3050" fontSize="9" fontFamily="monospace">100%</text>
+                  <text x="4" y="55" fill="#2a3050" fontSize="9" fontFamily="monospace">75%</text>
+                  <text x="4" y="100" fill="#2a3050" fontSize="9" fontFamily="monospace">50%</text>
+                  <text x="4" y="145" fill="#2a3050" fontSize="9" fontFamily="monospace">25%</text>
+
                   {/* <!-- retention area --> */}
-                  <path d="M0,14 C50,15 100,17 150,21 C200,25 220,28 240,30 L240,30 C242,58 244,62 260,65 C280,68 320,70 370,75 C420,80 450,82 470,85 C490,88 500,90 520,93 C540,88 560,90 580,92 C610,95 650,100 700,105 L700,180 L0,180Z" fill="url(#rg1)" />
-                  <path d="M0,14 C50,15 100,17 150,21 C200,25 220,28 240,30 L240,30 C242,58 244,62 260,65 C280,68 320,70 370,75 C420,80 450,82 470,85 C490,88 500,90 520,93 C540,88 560,90 580,92 C610,95 650,100 700,105" fill="none" stroke="#00e5a0" stroke-width="2" />
+                  {dashboard.isLoading.DropOffCurve ? null : (
+                    (() => {
+                      const data = dashboard.DropOffCurve?.data;
+                      if (!data || data.length === 0) return null;
+
+                      const maxMin = Math.max(...data.map((d: any) => d.minute_index));
+                      const pathPoints = data.map((d: any) => {
+                        const x = (d.minute_index / maxMin) * 700;
+                        const y = 180 - (d['AVG(dropoff_rate_by_view)'] * 180);
+                        return `${x},${y}`;
+                      });
+
+                      const dLine = `M0,${180 - (data[0]['AVG(dropoff_rate_by_view)'] * 180)} L${pathPoints.join(' L')}`;
+                      const dArea = `${dLine} L700,180 L0,180Z`;
+
+                      const labels = [0, 1, 2, 3, 4].map(i => {
+                        const val = Math.round(maxMin * (i / 4));
+                        const x = i * 165;
+                        return <text key={i} x={x} y="175" fill="#2a3050" fontSize="8" fontFamily="monospace">{val}:00</text>;
+                      });
+
+                      return (
+                        <>
+                          <path d={dArea} fill="url(#rg1)" />
+                          <path d={dLine} fill="none" stroke="#00e5a0" strokeWidth="2" />
+                          {labels}
+                        </>
+                      );
+                    })()
+                  )}
+
                   {/* <!-- ad break 1 --> */}
-                  <line x1="240" y1="0" x2="240" y2="180" stroke="#ff3d5a" stroke-width="1" stroke-dasharray="3,3" opacity=".5" />
+                  {/* <line x1="240" y1="0" x2="240" y2="180" stroke="#ff3d5a" strokeWidth="1" strokeDasharray="3,3" opacity=".5" />
                   <rect x="232" y="0" width="16" height="14" fill="rgba(255,61,90,0.15)" rx="2" />
-                  <text x="240" y="10" fill="#ff3d5a" font-size="8" font-family="monospace" text-anchor="middle">QC1</text>
+                  <text x="240" y="10" fill="#ff3d5a" fontSize="8" fontFamily="monospace" textAnchor="middle">QC1</text> */}
                   {/* <!-- drop annotation --> */}
-                  <text x="245" y="46" fill="#ff3d5a" font-size="9" font-family="monospace">−18%</text>
+                  {/* <text x="245" y="46" fill="#ff3d5a" fontSize="9" fontFamily="monospace">−18%</text> */}
                   {/* <!-- ad break 2 --> */}
-                  <line x1="470" y1="0" x2="470" y2="180" stroke="#ff3d5a" stroke-width="1" stroke-dasharray="3,3" opacity=".5" />
-                  <rect x="462" y="0" width="16" height="14" fill="rgba(255,61,90,0.15)" rx="2" />
-                  <text x="470" y="10" fill="#ff3d5a" font-size="8" font-family="monospace" text-anchor="middle">QC2</text>
-                  <text x="475" y="76" fill="#ff3d5a" font-size="9" font-family="monospace">−11%</text>
+                  {/* <line x1="470" y1="0" x2="470" y2="180" stroke="#ff3d5a" strokeWidth="1" strokeDasharray="3,3" opacity=".5" />
+                  <rect x="462" y="0" width="16" height="14" fill="rgba(255,61,90,0.15)" rx="2" /> */}
+                  {/* <text x="470" y="10" fill="#ff3d5a" fontSize="8" fontFamily="monospace" textAnchor="middle">QC2</text>
+                  <text x="475" y="76" fill="#ff3d5a" fontSize="9" fontFamily="monospace">−11%</text> */}
                   {/* <!-- peak window --> */}
-                  <rect x="320" y="0" width="140" height="180" fill="rgba(0,229,160,0.04)" rx="0" />
-                  <text x="390" y="170" fill="#00e5a0" font-size="8" font-family="monospace" text-anchor="middle">Peak Attention</text>
+                  {/* <rect x="320" y="0" width="140" height="180" fill="rgba(0,229,160,0.04)" rx="0" />
+                  <text x="390" y="170" fill="#00e5a0" fontSize="8" fontFamily="monospace" textAnchor="middle">Peak Attention</text> */}
                   {/* <!-- time labels --> */}
-                  <text x="0" y="175" fill="#2a3050" font-size="8" font-family="monospace">0:00</text>
-                  <text x="165" y="175" fill="#2a3050" font-size="8" font-family="monospace">15:00</text>
-                  <text x="330" y="175" fill="#2a3050" font-size="8" font-family="monospace">30:00</text>
-                  <text x="495" y="175" fill="#2a3050" font-size="8" font-family="monospace">45:00</text>
-                  <text x="660" y="175" fill="#2a3050" font-size="8" font-family="monospace">60:00</text>
                 </svg>
                 <div className="chart-note" id="curve-note">QC1 tại phút 24 gây drop 18% · QC2 tại phút 40 gây drop 11% · Peak Attention: phút 27–40 — đây là vị trí quảng cáo tối ưu nhất</div>
               </div>
@@ -726,34 +788,34 @@ function App() {
               <div className="section">
                 <div className="section-header"><div className="section-title" id="ep-trend-title">📈 Retention Trend theo tập · 8 tập gần nhất</div></div>
                 <div className="section-body">
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '80px', paddingBottom: '4px' }} id="episode-bars">
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '250px', paddingBottom: '4px' }} id="episode-bars">
                   </div>
                   <div style={{ display: 'flex', gap: '4px', marginTop: '2px' }} id="episode-labels"></div>
                   <div style={{ marginTop: '10px', fontSize: '10px', color: 'var(--text-3)' }} id="ep-trend-note">Xu hướng tăng tốt trong 3 tập gần nhất. Tập 28 cao nhất trong chuỗi.</div>
                 </div>
               </div>
-              <div className="section">
+              <div className="section" style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className="section-header"><div className="section-title">👥 Audience Loyalty Breakdown</div></div>
-                <div className="section-body">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div className="section-body" style={{ flex: 1 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: "100%" }}>
                     <div className="mini-kpi">
-                      <div className="mk-label">Return Viewer Rate</div>
-                      <div className="mk-val green" id="kpi-rvr">68.9%</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }}>Return Viewer Rate</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
                       <div className="mk-sub" id="kpi-rvr-sub">↑ +2.3pp vs tuần trước</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label">Loyal Fan (xem ≥3/4 tập)</div>
-                      <div className="mk-val green" id="kpi-loyal">41.2%</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }}>Loyal Fan (xem ≥3/4 tập)</div>
+                      <div className={`mk-val ${dashboard.isLoading.AverageDropOffByMinute ? 'green' : (dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-loyal">41.2%</div>
                       <div className="mk-sub" id="kpi-loyal-sub">Fan base ổn định</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label">New Viewer Rate</div>
-                      <div className="mk-val text" id="kpi-new">31.1%</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }}>New Viewer Rate</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 70 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 60 ? 'text' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 40 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
                       <div className="mk-sub" id="kpi-new-sub">Vẫn thu hút người mới</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label">Lead-in từ Thời Sự 19h</div>
-                      <div className="mk-val cyan" id="kpi-leadin" style={{ color: 'var(--cyan)' }}>68%</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }}>Lead-in từ {program}</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
                       <div className="mk-sub" id="kpi-leadin-sub">Anchor chain prime time</div>
                     </div>
                   </div>
@@ -770,5 +832,13 @@ function App() {
     </>
   )
 }
+
+const App = () => {
+  return (
+    <DashboardFilterProvider>
+      <DashboardContent />
+    </DashboardFilterProvider>
+  );
+};
 
 export default App

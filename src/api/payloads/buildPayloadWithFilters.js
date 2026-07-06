@@ -18,9 +18,9 @@ const buildQueriesFilters = ({ column, values }) => {
   }];
 };
 
-const buildQueriesRangeFilters = ({ column, startHours, startMinutes, op='<=' }) => {
+const buildQueriesRangeFilters = ({ column, startHours, startMinutes, op = '<=' }) => {
   if (startHours?.min === 0 && startHours?.max === 23 && startMinutes?.min === 0 && startMinutes?.max === 59) return null;
-  
+
   return [{
     col: column,
     op: '>=',
@@ -184,6 +184,12 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
         !disabledFilters.includes(disabledKey) &&
         !disabledFilters.includes('allFilters')
       ) {
+        if (builtFilter[0].col === 'channel_name_tvd') {
+          newFilters = newFilters.filter(f => f.col !== 'channel_name_tvd')
+        }
+        if (builtFilter[0].col === 'program_name') {
+          newFilters = newFilters.filter(f => f.col !== 'program_name')
+        }
         newFilters = appendFilters(newFilters, builtFilter);
       }
     });
@@ -200,7 +206,7 @@ const appendFilters = (existingFilters, newFilters) => {
   if (!existingFilters || (!Array.isArray(existingFilters) && typeof existingFilters !== 'object')) {
     return newFilters;
   }
-  
+
   // Merge: giữ nguyên existing + thêm new filters
   return [...existingFilters, ...newFilters];
 };
@@ -250,8 +256,8 @@ export const buildPayloadWithFilters = (basePayload, filterState, enabledFilters
     next.payload.form_data.extra_form_data = next.payload.form_data.extra_form_data || {};
     next.payload.form_data.extra_form_data.time_range = timeRange;
   }
-  
+
   next.payload.queries = appendAllFilters(next.payload.queries, filterState, enabledFilters);
-  
+
   return next;
 };

@@ -11,6 +11,10 @@ const HOOKS = [
   { hook: useCallApi.useMorningBlock06h3009h00, dataKey: 'MorningBlock06h3009h00' },
   { hook: useCallApi.usePrimeTimeChain19h0022h30, dataKey: 'PrimeTimeChain19h0022h30' },
   { hook: useCallApi.useAudienceFullChannel, dataKey: 'AudienceFullChannel' },
+  { hook: useCallApi.useProgramInfor, dataKey: 'ProgramInfor' },
+  { hook: useCallApi.useAverageDropOffByMinute, dataKey: 'AverageDropOffByMinute' },
+  { hook: useCallApi.useWatchTimeEfficiencyLast8Weeks, dataKey: 'WatchTimeEfficiencyLast8Weeks' },
+  { hook: useCallApi.useDropOffCurve, dataKey: 'DropOffCurve' }
 ];
 
 export const useDashboardData = () => {

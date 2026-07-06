@@ -2,7 +2,7 @@ export const programSTRENGTHEN = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A936%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 288,
+            "id": 286,
             "type": "table"
         },
         "force": false,
@@ -24,7 +24,7 @@ export const programSTRENGTHEN = {
                         ]
                     },
                     {
-                        "col": "date",
+                        "col": "start_of_week",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
                     }
@@ -39,8 +39,8 @@ export const programSTRENGTHEN = {
                     {
                         "timeGrain": "P1W",
                         "columnType": "BASE_AXIS",
-                        "sqlExpression": "date",
-                        "label": "date",
+                        "sqlExpression": "start_of_week",
+                        "label": "start_of_week",
                         "expressionType": "SQL"
                     }
                 ],
@@ -77,7 +77,7 @@ export const programSTRENGTHEN = {
                 "series_limit": 0,
                 "order_desc": true,
                 "url_params": {
-                    "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
                 },
                 "custom_params": {},
                 "custom_form_data": {},
@@ -86,7 +86,7 @@ export const programSTRENGTHEN = {
                         "operation": "pivot",
                         "options": {
                             "index": [
-                                "date"
+                                "start_of_week"
                             ],
                             "columns": [],
                             "aggregates": {
@@ -104,13 +104,13 @@ export const programSTRENGTHEN = {
             }
         ],
         "form_data": {
-            "datasource": "288__table",
+            "datasource": "286__table",
             "viz_type": "big_number",
             "slice_id": 936,
             "url_params": {
-                "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
             },
-            "x_axis": "date",
+            "x_axis": "start_of_week",
             "time_grain_sqla": "P1W",
             "metric": {
                 "aggregate": "COUNT",
@@ -160,7 +160,7 @@ export const programSTRENGTHEN = {
                     "comparator": "No filter",
                     "expressionType": "SIMPLE",
                     "operator": "TEMPORAL_RANGE",
-                    "subject": "date"
+                    "subject": "start_of_week"
                 }
             ],
             "compare_lag": 1,
@@ -195,8 +195,11 @@ export const programSTRENGTHEN = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
+                "AVG(Watch Time Efficiency)": "#1FA8C9",
                 "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9",
+                "REVIEW": "#454E7C",
+                "MAINTAIN": "#5AC189"
             },
             "extra_filters": [],
             "force": false,

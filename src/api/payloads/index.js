@@ -7,3 +7,7 @@ export { programSTRENGTHEN } from "./programSTRENGTHEN";
 export { AudienceFullChannel } from "./AudienceFullChannel";
 export { PrimeTimeChain19h0022h30 } from "./PrimeTimeChain19h0022h30";
 export { MorningBlock06h3009h00 } from "./MorningBlock06h3009h00";
+export { ProgramInfor } from "./ProgramInfor";
+export { AverageDropOffByMinute } from "./AverageDropOffByMinute";
+export { WatchTimeEfficiencyLast8Weeks } from "./WatchTimeEfficiencyLast8Weeks";
+export { DropOffCurve } from "./DropOffCurve";

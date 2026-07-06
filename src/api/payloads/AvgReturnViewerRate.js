@@ -2,7 +2,7 @@ export const AvgReturnViewerRate = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A939%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 288,
+            "id": 286,
             "type": "table"
         },
         "force": false,
@@ -17,7 +17,7 @@ export const AvgReturnViewerRate = {
                         ]
                     },
                     {
-                        "col": "date",
+                        "col": "start_of_week",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
                     }
@@ -32,28 +32,45 @@ export const AvgReturnViewerRate = {
                     {
                         "timeGrain": "P1W",
                         "columnType": "BASE_AXIS",
-                        "sqlExpression": "date",
-                        "label": "date",
+                        "sqlExpression": "start_of_week",
+                        "label": "start_of_week",
                         "expressionType": "SQL"
                     }
                 ],
                 "metrics": [
                     {
-                        "aggregate": null,
-                        "column": null,
+                        "aggregate": "AVG",
+                        "column": {
+                            "advanced_data_type": null,
+                            "certification_details": null,
+                            "certified_by": null,
+                            "column_name": "Return Viewer Rate",
+                            "description": null,
+                            "expression": null,
+                            "filterable": true,
+                            "groupby": true,
+                            "id": 3603,
+                            "is_certified": false,
+                            "is_dttm": false,
+                            "python_date_format": null,
+                            "type": "DOUBLE",
+                            "type_generic": 0,
+                            "verbose_name": null,
+                            "warning_markdown": null
+                        },
                         "datasourceWarning": false,
-                        "expressionType": "SQL",
+                        "expressionType": "SIMPLE",
                         "hasCustomLabel": false,
-                        "label": "AVG(return_viewer_rate)*100",
-                        "optionName": "metric_h2m2v78llbj_j3ec3yiga5",
-                        "sqlExpression": "AVG(return_viewer_rate)*100"
+                        "label": "AVG(Return Viewer Rate)",
+                        "optionName": "metric_5ndpwdfhwoe_y1ccky6juzr",
+                        "sqlExpression": null
                     }
                 ],
                 "annotation_layers": [],
                 "series_limit": 0,
                 "order_desc": true,
                 "url_params": {
-                    "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
                 },
                 "custom_params": {},
                 "custom_form_data": {},
@@ -62,11 +79,11 @@ export const AvgReturnViewerRate = {
                         "operation": "pivot",
                         "options": {
                             "index": [
-                                "date"
+                                "start_of_week"
                             ],
                             "columns": [],
                             "aggregates": {
-                                "AVG(return_viewer_rate)*100": {
+                                "AVG(Return Viewer Rate)": {
                                     "operator": "mean"
                                 }
                             },
@@ -80,23 +97,40 @@ export const AvgReturnViewerRate = {
             }
         ],
         "form_data": {
-            "datasource": "288__table",
+            "datasource": "286__table",
             "viz_type": "big_number",
             "slice_id": 939,
             "url_params": {
-                "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
             },
-            "x_axis": "date",
+            "x_axis": "start_of_week",
             "time_grain_sqla": "P1W",
             "metric": {
-                "aggregate": null,
-                "column": null,
+                "aggregate": "AVG",
+                "column": {
+                    "advanced_data_type": null,
+                    "certification_details": null,
+                    "certified_by": null,
+                    "column_name": "Return Viewer Rate",
+                    "description": null,
+                    "expression": null,
+                    "filterable": true,
+                    "groupby": true,
+                    "id": 3603,
+                    "is_certified": false,
+                    "is_dttm": false,
+                    "python_date_format": null,
+                    "type": "DOUBLE",
+                    "type_generic": 0,
+                    "verbose_name": null,
+                    "warning_markdown": null
+                },
                 "datasourceWarning": false,
-                "expressionType": "SQL",
+                "expressionType": "SIMPLE",
                 "hasCustomLabel": false,
-                "label": "AVG(return_viewer_rate)*100",
-                "optionName": "metric_h2m2v78llbj_j3ec3yiga5",
-                "sqlExpression": "AVG(return_viewer_rate)*100"
+                "label": "AVG(Return Viewer Rate)",
+                "optionName": "metric_5ndpwdfhwoe_y1ccky6juzr",
+                "sqlExpression": null
             },
             "adhoc_filters": [
                 {
@@ -104,7 +138,7 @@ export const AvgReturnViewerRate = {
                     "comparator": "No filter",
                     "expressionType": "SIMPLE",
                     "operator": "TEMPORAL_RANGE",
-                    "subject": "date"
+                    "subject": "start_of_week"
                 }
             ],
             "compare_lag": 1,
@@ -139,8 +173,11 @@ export const AvgReturnViewerRate = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
+                "AVG(Watch Time Efficiency)": "#1FA8C9",
                 "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9",
+                "REVIEW": "#454E7C",
+                "MAINTAIN": "#5AC189"
             },
             "extra_filters": [],
             "force": false,

@@ -23,6 +23,8 @@
   --purple-2: rgba(168, 85, 247, 0.1);
   --cyan: #00c2e0;
   --cyan-2: rgba(0, 194, 224, 0.1);
+  --pink: #ff33a1;
+  --pink-2: rgba(255, 51, 161, 0.12);
   --mono: 'JetBrains Mono', monospace;
   --display: 'Epilogue', sans-serif;
 }
@@ -111,16 +113,95 @@ body::before {
   gap: 12px;
 }
 
-.nav-channel {
+.nav-channel-vtv1 {
   padding: 4px 12px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .06em;
-  background: rgba(245, 166, 35, 0.12);
+  background: var(--amber-2);
   color: var(--amber);
   border: 1px solid rgba(245, 166, 35, .25);
   font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv2 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--green-2);
+  color: var(--green);
+  border: 1px solid rgba(0, 229, 160, .25);
+  font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv3 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--blue-2);
+  color: var(--blue);
+  border: 1px solid rgba(61, 139, 255, .25);
+  font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv4 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--cyan-2);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 194, 224, .25);
+  font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv5 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--purple-2);
+  color: var(--purple);
+  border: 1px solid rgba(168, 85, 247, .25);
+  font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv6 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--pink-2);
+  color: var(--pink);
+  border: 1px solid rgba(255, 51, 161, .25);
+  font-family: var(--display);
+  cursor: pointer;
+}
+
+.nav-channel-vtv8 {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--red-2);
+  color: var(--red);
+  border: 1px solid rgba(255, 61, 90, .25);
+  font-family: var(--display);
+  cursor: pointer;
 }
 
 .nav-date {
@@ -876,8 +957,9 @@ body::before {
 .hs-comp-label {
   font-size: 9px;
   color: var(--text-3);
-  width: 90px;
+  width: 95px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .hs-comp-bar-wrap {
