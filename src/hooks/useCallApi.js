@@ -1,16 +1,16 @@
 import { useApi } from './useApi';
 import * as getChart from '../api/dashboardApi';
-// import { useDashboardFilters, useDashboardCrossFilters } from '../context/DashboardFilterContext';
+import { useDashboardFilters } from '../context/DashboardFilterContext';
 
 const createChartHook = (apiFn, keyMain = '') => () => {
-  // const { appliedFilters } = useDashboardFilters();
+  const { appliedFilters } = useDashboardFilters();
   // const { crossFilters } = useDashboardCrossFilters();
 
   // const shouldSkip = crossFilters?.skipNext === keyMain || (crossFilters?.main && keyMain === crossFilters.main);
 
   return useApi(
     apiFn,
-    // [appliedFilters]
+    [appliedFilters]
     // [appliedFilters, crossFilters],
     // { shouldSkip }
   );
@@ -42,3 +42,15 @@ export const usePrimeTimeChain19h0022h30 = () =>
 
 export const useAudienceFullChannel = () =>
   createChartHook(getChart.AudienceFullChannel)();
+
+export const useProgramInfor = () =>
+  createChartHook(getChart.ProgramInfor)();
+
+export const useAverageDropOffByMinute = () =>
+  createChartHook(getChart.AverageDropOffByMinute)();
+
+export const useWatchTimeEfficiencyLast8Weeks = () =>
+  createChartHook(getChart.WatchTimeEfficiencyLast8Weeks)();
+
+export const useDropOffCurve = () =>
+  createChartHook(getChart.DropOffCurve)();

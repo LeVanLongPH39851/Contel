@@ -8,7 +8,7 @@ export const PrimeTimeChain19h0022h30 = {
         "force": false,
         "queries": [
             {
-                "time_range": "01-01-2026 : 01-01-2026",
+                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)",
                 "filters": [
                     {
                         "col": "channel_name_tvd",
@@ -104,7 +104,7 @@ export const PrimeTimeChain19h0022h30 = {
                 },
                 "order_desc": false,
                 "url_params": {
-                    "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
                 },
                 "custom_params": {},
                 "custom_form_data": {},
@@ -117,7 +117,7 @@ export const PrimeTimeChain19h0022h30 = {
             "viz_type": "table",
             "slice_id": 940,
             "url_params": {
-                "native_filters_key": "gopTW064xfeVfPgqeEATzRimInw0vWV1HzEwNwRsvPZuh7bMBOaoEsOS6JPn_xN1"
+                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
             },
             "query_mode": "aggregate",
             "groupby": [
@@ -238,14 +238,17 @@ export const PrimeTimeChain19h0022h30 = {
                         ]
                     }
                 ],
-                "time_range": "01-01-2026 : 01-01-2026"
+                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)"
             },
             "chart_id": 940,
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
+                "AVG(Watch Time Efficiency)": "#1FA8C9",
                 "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9",
+                "REVIEW": "#454E7C",
+                "MAINTAIN": "#5AC189"
             },
             "extra_filters": [],
             "force": false,
