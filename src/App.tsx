@@ -4,7 +4,7 @@ import { useDashboardData } from './hooks/useDashboardData';
 import { switchTab, loadProgram, selectProgram, init, drawSparkline } from "./utils/App";
 import { DashboardFilterProvider } from './context/DashboardFilterContext';
 import { useDashboardFilters } from './context/DashboardFilterContext';
-import { toSlug } from './helpers/helper';
+import { toSlug, getISOWeek, formatDate } from './helpers/helper';
 
 function DashboardContent() {
   const dashboard = useDashboardData();
@@ -61,6 +61,91 @@ function DashboardContent() {
     }
   }, [programs, selectedProgramSlug]);
 
+  const dates = useMemo(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const startDate = new Date(yesterday);
+    startDate.setMonth(startDate.getMonth() - 3);
+    startDate.setDate(1);
+
+    const result = [];
+
+    for (
+      let d = new Date(startDate);
+      d <= yesterday;
+      d.setDate(d.getDate() + 1)
+    ) {
+      result.push({
+        label: `${String(d.getDate()).padStart(2, "0")}/${String(
+          d.getMonth() + 1
+        ).padStart(2, "0")}/${d.getFullYear()}`,
+        value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(d.getDate()).padStart(2, "0")}`,
+      });
+    }
+
+    return result.reverse();
+  }, []);
+
+  const weekOptions = useMemo(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const startDate = new Date(yesterday);
+    startDate.setMonth(startDate.getMonth() - 3);
+    startDate.setDate(1);
+
+    // Lùi về Chủ nhật gần nhất
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+
+    const weeks = [];
+
+    let current = new Date(startDate);
+
+    while (current <= yesterday) {
+      const weekStart = new Date(current);
+
+      const weekEnd = new Date(current);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+
+      if (weekEnd > yesterday) {
+        weekEnd.setTime(yesterday.getTime());
+      }
+
+      weeks.push({
+        week: getISOWeek(weekStart),
+        start: formatDate(weekStart),
+        end: formatDate(weekEnd),
+        startDate: new Date(weekStart),
+      });
+
+      current.setDate(current.getDate() + 7);
+    }
+
+    return weeks.sort((a, b) => b.startDate - a.startDate);
+  }, []);
+
+  const updateText = useMemo(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate());
+
+    const day = String(yesterday.getDate()).padStart(2, "0");
+    const month = String(yesterday.getMonth() + 1).padStart(2, "0");
+    const year = yesterday.getFullYear();
+
+    return `Cập nhật ${day}/${month}/${year}`;
+  }, []);
+
+  const onChange = (key, value) => {
+    setAppliedFilters({ ...appliedFilters, [key]: [value] });
+  }
+
+  console.log(appliedFilters);
+
+
   return (
     <>
       {/* <!-- NAV --> */}
@@ -70,14 +155,31 @@ function DashboardContent() {
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
         <div className="nav-right">
-          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters === null || appliedFilters?.channels?.[0] === 'VTV1' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
-          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
-          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
-          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
-          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
-          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
-          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
-          <div className="nav-date"><span className="live-dot"></span>Cập nhật 08/05/2026 · 09:00</div>
+          {tab === 'lineup' && <select className="nav-select" onChange={(e) => onChange("weeks", e.target.value)}>
+            {weekOptions.map((item) => (
+              <option key={item.week} value={`Tuần ${item.week} (${item.start} - ${item.end})`}>
+                {`Tuần ${item.week} (${item.start} - ${item.end})`}
+              </option>
+            ))}
+          </select>}
+          {tab !== 'lineup' && <select
+            className="nav-select"
+            onChange={(e) => onChange("dates", e.target.value)}
+          >
+            {dates.map((date) => (
+              <option key={date.value} value={date.value}>
+                {date.label}
+              </option>
+            ))}
+          </select>}
+          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.6 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
+          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
+          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
+          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
+          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
+          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
+          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
+          <div className="nav-date"><span className="live-dot"></span>Cập nhật {updateText} · 09:00</div>
         </div>
       </nav>
 
@@ -85,7 +187,7 @@ function DashboardContent() {
       <div className="header-strip">
         <div>
           <div className="header-title">Sức khỏe <span>Nội dung</span> {appliedFilters?.channels?.[0] || 'VTV1'}</div>
-          <div className="header-sub">Tuần 19 · 28/4 – 4/5/2026 · 24 chương trình đang theo dõi</div>
+          <div className="header-sub">{appliedFilters?.weeks?.[0] || `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})`} · {dashboard?.ProgramHealthScorecard?.data?.length || 0} chương trình đang theo dõi</div>
         </div>
         <div className="header-divider"></div>
         <div className="header-meta"><strong>Kênh</strong>{appliedFilters?.channels?.[0] || 'VTV1'}</div>
@@ -344,9 +446,9 @@ function DashboardContent() {
 ══════════════════════════════ --> */}
         <div className="view" id="tab-dependency">
 
-          <div className="callout" style={{ marginBottom: '14px' }}>
+          {/* <div className="callout" style={{ marginBottom: '14px' }}>
             <strong>Scheduling Dependency Map</strong> — Chương trình nào đang dẫn audience sang chương trình nào? Lead-in Effect cao = chương trình trước đang "cho mượn" khán giả. Nếu cắt chương trình có Lead-in cao, chương trình sau sẽ mất audience ngay lập tức. Đây là dữ liệu VTV1 chưa từng có trước đây.
-          </div>
+          </div> */}
 
           <div className="two-col" style={{ marginBottom: '12px' }}>
             {/* <!-- Prime Time Chain --> */}
