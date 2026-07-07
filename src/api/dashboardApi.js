@@ -40,13 +40,13 @@ export const programSTRENGTHEN = (appliedFilters) =>
   postChart(payloads.programSTRENGTHEN, appliedFilters, ['programFilters']);
 
 export const MorningBlock06h3009h00 = (appliedFilters) =>
-  postChart(payloads.MorningBlock06h3009h00, appliedFilters);
+  postChart(payloads.MorningBlock06h3009h00, appliedFilters, ['programFilters']);
 
 export const PrimeTimeChain19h0022h30 = (appliedFilters) =>
-  postChart(payloads.PrimeTimeChain19h0022h30, appliedFilters);
+  postChart(payloads.PrimeTimeChain19h0022h30, appliedFilters, ['programFilters']);
 
 export const AudienceFullChannel = (appliedFilters) =>
-  postChart(payloads.AudienceFullChannel, appliedFilters);
+  postChart(payloads.AudienceFullChannel, appliedFilters, ['programFilters']);
 
 export const ProgramInfor = (appliedFilters) =>
   postChart(payloads.ProgramInfor, appliedFilters);

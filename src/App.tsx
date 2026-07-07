@@ -9,6 +9,7 @@ import { toSlug } from './helpers/helper';
 function DashboardContent() {
   const dashboard = useDashboardData();
   const { appliedFilters, setAppliedFilters } = useDashboardFilters();
+  const [tab, setTab] = useState('lineup');
   const AvgHealthScore = dashboard.isLoading.AvgHealthScore ? null : dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)']?.toFixed(2);
   const AvgHealthScoreDelta = dashboard.isLoading.AvgHealthScore ? null : ((dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)'] - dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)']) * 100 / dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)'])?.toFixed(2);
   const AvgRetentionRate = dashboard.isLoading.AvgRetentionRate ? null : dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 1]?.['AVG(Watch Time Efficiency)']?.toFixed(2);
@@ -26,7 +27,6 @@ function DashboardContent() {
       return acc;
     }, {}))
   };
-  const [isChannel, setIsChannel] = useState(true)
   const program = appliedFilters?.programs?.[0] || 'THỜI SỰ 19H';
   // ── Program data ──
   const programs = useMemo(() => ({
@@ -49,17 +49,17 @@ function DashboardContent() {
   useEffect(() => {
     if (!dashboard.isLoading.ProgramHealthScorecard) {
       Object.keys(sparkData).forEach(k => drawSparkline(k, sparkData[k].d, sparkData[k].c));
-      init(programs);
     }
+    init(programs);
   }, [dashboard.isLoading.ProgramHealthScorecard, programs]);
 
   const [selectedProgramSlug, setSelectedProgramSlug] = useState(null);
 
   useEffect(() => {
-    if (selectedProgramSlug) {
+    if (selectedProgramSlug && tab === 'program') {
       selectProgram(selectedProgramSlug, programs);
     }
-  }, [programs && !isChannel, selectedProgramSlug]);
+  }, [programs, selectedProgramSlug]);
 
   return (
     <>
@@ -70,13 +70,13 @@ function DashboardContent() {
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
         <div className="nav-right">
-          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters === null || appliedFilters?.channels?.[0] === 'VTV1' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); setIsChannel(true) }}>VTV1</div>
-          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); setIsChannel(true) }}>VTV2</div>
-          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); setIsChannel(true) }}>VTV3</div>
-          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); setIsChannel(true) }}>VTV4</div>
-          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); setIsChannel(true) }}>VTV5</div>
-          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); setIsChannel(true) }}>VTV6</div>
-          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); setIsChannel(true) }}>VTV8</div>
+          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters === null || appliedFilters?.channels?.[0] === 'VTV1' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
+          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
+          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
+          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
+          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
+          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
+          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] === 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
           <div className="nav-date"><span className="live-dot"></span>Cập nhật 08/05/2026 · 09:00</div>
         </div>
       </nav>
@@ -98,10 +98,10 @@ function DashboardContent() {
 
       {/* <!-- TABS --> */}
       <div className="tab-bar">
-        <div className="tab active" onClick={() => switchTab('lineup')}>📋 Lineup Overview</div>
-        <div className="tab" onClick={() => switchTab('dependency')}>🔗 Scheduling Dependency</div>
-        {/* <div className="tab" onClick={() => switchTab('insights')}>⚡ Quyết định tuần này</div> */}
-        <div className="tab" onClick={() => switchTab('program')}>🔍 Chi tiết chương trình</div>
+        <div className="tab" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Lineup Overview</div>
+        <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Scheduling Dependency</div>
+        {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
+        <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
       </div>
 
       <div className="main">
@@ -170,7 +170,7 @@ function DashboardContent() {
                   <tbody>
                     {/* <!-- STRENGTHEN --> */}
                     {dashboard.ProgramHealthScorecard.data.map((program: any) => (
-                      < tr onClick={() => { setAppliedFilters({ ...appliedFilters, programs: [program.program_name] }); setIsChannel(false); setSelectedProgramSlug(toSlug(program.program_name)); }} style={{ cursor: 'pointer' }}>
+                      < tr onClick={() => { setAppliedFilters({ ...appliedFilters, programs: [program.program_name] }); setTab('program'); setSelectedProgramSlug(toSlug(program.program_name)); }} style={{ cursor: 'pointer' }}>
                         <td style={{ paddingLeft: '16px' }}>
                           <div className="prog-name">{program.program_name}</div>
                           {/* <div className="prog-slot">19:00 – 19:30 · Hàng ngày</div> */}
