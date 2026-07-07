@@ -2,7 +2,7 @@ export const ProgramInfor = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A931%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 288,
+            "id": 292,
             "type": "table"
         },
         "force": false,
@@ -22,6 +22,13 @@ export const ProgramInfor = {
                         "op": "IN",
                         "val": [
                             "THỜI SỰ 19H"
+                        ]
+                    },
+                    {
+                        "col": "platform",
+                        "op": "IN",
+                        "val": [
+                            "Big Screen"
                         ]
                     },
                     {
@@ -115,7 +122,7 @@ export const ProgramInfor = {
                 "series_limit": 0,
                 "order_desc": true,
                 "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
+                    "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
                 },
                 "custom_params": {},
                 "custom_form_data": {},
@@ -124,17 +131,15 @@ export const ProgramInfor = {
             }
         ],
         "form_data": {
-            "datasource": "288__table",
+            "datasource": "292__table",
             "viz_type": "table",
             "slice_id": 931,
             "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
+                "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
             },
             "query_mode": "aggregate",
             "groupby": [],
-            "temporal_columns_lookup": {
-                "date": true
-            },
+            "temporal_columns_lookup": {},
             "metrics": [
                 {
                     "aggregate": null,
@@ -199,9 +204,29 @@ export const ProgramInfor = {
             "adhoc_filters": [
                 {
                     "clause": "WHERE",
-                    "comparator": "No filter",
+                    "comparator": [
+                        "Big Screen"
+                    ],
+                    "datasourceWarning": false,
                     "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_5hc80w4mfip_injldruia7s",
+                    "isExtra": false,
+                    "isNew": false,
+                    "operator": "IN",
+                    "operatorId": "IN",
+                    "sqlExpression": null,
+                    "subject": "platform"
+                },
+                {
+                    "clause": "WHERE",
+                    "comparator": "No filter",
+                    "datasourceWarning": false,
+                    "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_msjl65ugo78_8ef3ft4p2tv",
+                    "isExtra": true,
+                    "isNew": false,
                     "operator": "TEMPORAL_RANGE",
+                    "sqlExpression": null,
                     "subject": "date"
                 }
             ],
@@ -241,11 +266,12 @@ export const ProgramInfor = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9",
+                "AVG(dropoff_rate_by_view)": "#1FA8C9",
+                "AVG(Watch Time Efficiency)": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,
