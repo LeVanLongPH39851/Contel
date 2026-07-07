@@ -2,7 +2,7 @@ export const AverageDropOffByMinute = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A930%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 288,
+            "id": 292,
             "type": "table"
         },
         "force": false,
@@ -22,13 +22,6 @@ export const AverageDropOffByMinute = {
                         "op": "IN",
                         "val": [
                             "THỜI SỰ 19H"
-                        ]
-                    },
-                    {
-                        "col": "platform",
-                        "op": "IN",
-                        "val": [
-                            "Big Screen"
                         ]
                     },
                     {
@@ -59,18 +52,18 @@ export const AverageDropOffByMinute = {
                 "series_limit": 0,
                 "order_desc": true,
                 "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
+                    "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
                 },
                 "custom_params": {},
                 "custom_form_data": {}
             }
         ],
         "form_data": {
-            "datasource": "288__table",
+            "datasource": "292__table",
             "viz_type": "big_number_total",
             "slice_id": 930,
             "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
+                "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
             },
             "metric": {
                 "aggregate": null,
@@ -83,21 +76,6 @@ export const AverageDropOffByMinute = {
                 "sqlExpression": "AVG(avg_dropoff_by_view)*100*60"
             },
             "adhoc_filters": [
-                {
-                    "clause": "WHERE",
-                    "comparator": [
-                        "Big Screen"
-                    ],
-                    "datasourceWarning": false,
-                    "expressionType": "SIMPLE",
-                    "filterOptionName": "filter_s3iagbe0ge9_1ddzvlfowmb",
-                    "isExtra": false,
-                    "isNew": false,
-                    "operator": "IN",
-                    "operatorId": "IN",
-                    "sqlExpression": null,
-                    "subject": "platform"
-                },
                 {
                     "clause": "WHERE",
                     "comparator": "No filter",
@@ -142,11 +120,12 @@ export const AverageDropOffByMinute = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9",
+                "AVG(dropoff_rate_by_view)": "#1FA8C9",
+                "AVG(Watch Time Efficiency)": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,
