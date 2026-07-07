@@ -113,6 +113,26 @@ body::before {
   gap: 12px;
 }
 
+.nav-select {
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--amber-2);
+  color: var(--amber);
+  border: 1px solid rgba(245, 166, 35, .25);
+  font-family: var(--display);
+  cursor: pointer;
+  outline: none;
+}
+
+.nav-select option {
+  font-size: 12px;
+  font-weight: 700;
+  background-color: #231e10;
+}
+
 .nav-channel-vtv1 {
   padding: 4px 12px;
   border-radius: 4px;
@@ -1075,6 +1095,19 @@ body::before {
 /* ── SCROLL ── */
 ::-webkit-scrollbar {
   width: 6px;
+}
+
+select::-webkit-scrollbar {
+  width: 3px;
+}
+
+select::-webkit-scrollbar-track {
+  background: #231e10;
+}
+
+select::-webkit-scrollbar-thumb {
+  background: var(--amber);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-track {

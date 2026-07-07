@@ -170,6 +170,17 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
         column: 'brand',
         values: filterState.brands
       }),
+    },
+    {
+      key: 'weeks',
+      disabledKey: 'weekFilters',
+      build: () => buildQueriesFilters({
+        column: 'start_of_week',
+        values: filterState.weeks?.map((week) => {
+          const [day, month, year] = week.match(/\d{2}\/\d{2}\/\d{4}/)[0].split('/');
+          return `${year}-${month}-${day}`;
+        })
+      }),
     }
   ];
 
@@ -243,7 +254,13 @@ export const buildPayloadWithFilters = (basePayload, filterState, enabledFilters
     }));
   }
 
-  const timeRange = toTimeRangeString(filterState?.startDate, filterState?.endDate);
+  let startDate = undefined;
+  let endDate = undefined;
+  if (!enabledFilters.includes('dateFilters')) {
+    startDate = endDate = filterState?.dates?.[0];
+  }
+
+  const timeRange = toTimeRangeString(startDate, endDate);
 
   // 1) Update time_range cho queries + extra_form_data
   if (timeRange) {
