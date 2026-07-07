@@ -143,9 +143,6 @@ function DashboardContent() {
     setAppliedFilters({ ...appliedFilters, [key]: [value] });
   }
 
-  console.log(appliedFilters);
-
-
   return (
     <>
       {/* <!-- NAV --> */}
