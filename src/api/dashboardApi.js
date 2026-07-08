@@ -59,3 +59,6 @@ export const WatchTimeEfficiencyLast8Weeks = (appliedFilters) =>
 
 export const DropOffCurve = (appliedFilters) =>
   postChart(payloads.DropOffCurve, appliedFilters, ['weekFilters']);
+
+export const filterProgram = (appliedFilters) =>
+  postChart(payloads.filterProgram, appliedFilters, ['weekFilters', 'dateFilters', 'programFilters']);

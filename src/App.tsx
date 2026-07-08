@@ -140,6 +140,9 @@ function DashboardContent() {
   }, []);
 
   const onChange = (key, value) => {
+    if (key === 'programs') {
+      setSelectedProgramSlug(toSlug(value));
+    }
     setAppliedFilters({ ...appliedFilters, [key]: [value] });
   }
 
@@ -247,7 +250,7 @@ function DashboardContent() {
           {/* <!-- Program Health Table --> */}
           <div className="section">
             <div className="section-header">
-              <div className="section-title">📊 Program Health Scorecard · VTV1 · Tuần 19</div>
+              <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 27'}</div>
               <div className="section-sub">Click tên chương trình để xem chi tiết → Tab Chi tiết</div>
             </div>
             <div className="section-body" style={{ padding: '0' }}>
@@ -256,11 +259,11 @@ function DashboardContent() {
                   <tr>
                     <th style={{ paddingLeft: '16px' }}>Chương trình</th>
                     <th>Health Score</th>
+                    <th>Trend 4 tuần</th>
                     <th>Trạng thái</th>
                     <th>Retention</th>
                     <th>Return Viewer</th>
                     <th>Lead-in Effect</th>
-                    <th>Trend 4 tuần</th>
                     {/* <th>Hành động đề xuất</th> */}
                   </tr>
                 </thead>
@@ -280,6 +283,7 @@ function DashboardContent() {
                             <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program.status === 'STRENGTHEN' ? '#00e5a0' : program.status === 'MAINTAIN' ? '#3d8bff' : program.status === 'REVIEW' ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program.status === 'STRENGTHEN' ? 'var(--green)' : program.status === 'MAINTAIN' ? 'var(--blue)' : program.status === 'REVIEW' ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
                           </div>
                         </td>
+                        <td><div className="sparkline" id={`${program.program_name}`}></div></td>
                         <td><span className={`badge ${program.status.toLowerCase().replace(' ', '-')}`}>{program.status}</span></td>
                         <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'text' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">↑ +1.4pp</div> */}
@@ -290,7 +294,6 @@ function DashboardContent() {
                         <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 35 ? 'text' : program['Lead-in Effect']?.toFixed(1) > 18 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">→ Phim VTV1 20h</div> */}
                         </td>
-                        <td><div className="sparkline" id={`${program.program_name}`}></div></td>
                         {/* <td style={{ fontSize: '10px', color: 'var(--green)' }}>Đề xuất nâng tier giá slot QC</td> */}
                       </tr>
                     ))}
@@ -767,13 +770,16 @@ function DashboardContent() {
               <div className="section-title">🔍 Chọn chương trình để xem chi tiết</div>
             </div>
             <div className="section-body">
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <div className="tab" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-2)' }} onClick={() => loadProgram('rang-dong')}>Rạng Đông</div>
-                <div className="tab" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-2)' }} onClick={() => loadProgram('thoi-su')}>Thời Sự 19h</div>
-                <div className="tab" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--amber)', borderColor: 'rgba(245,166,35,.3)' }} onClick={() => loadProgram('chuyen-dong')}>Chuyển Động 24h ⚠</div>
-                <div className="tab" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--red)', borderColor: 'rgba(255,61,90,.3)' }} onClick={() => loadProgram('phim-trua')}>Phim Trưa 🔴</div>
-                <div className="tab" style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-2)' }} onClick={() => loadProgram('suc-khoe')}>Sức Khỏe & CS</div>
-              </div>
+              <select
+                className="nav-select"
+                onChange={(e) => onChange("programs", e.target.value)}
+              >
+                {dashboard?.FilterProgram?.data?.map((program) => (
+                  <option key={program.program_name} value={program.program_name}>
+                    {program.program_name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

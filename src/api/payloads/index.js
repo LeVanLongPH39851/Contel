@@ -11,3 +11,4 @@ export { ProgramInfor } from "./ProgramInfor";
 export { AverageDropOffByMinute } from "./AverageDropOffByMinute";
 export { WatchTimeEfficiencyLast8Weeks } from "./WatchTimeEfficiencyLast8Weeks";
 export { DropOffCurve } from "./DropOffCurve";
+export { filterProgram } from "./filterProgram";

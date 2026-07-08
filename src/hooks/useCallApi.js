@@ -54,3 +54,6 @@ export const useWatchTimeEfficiencyLast8Weeks = () =>
 
 export const useDropOffCurve = () =>
   createChartHook(getChart.DropOffCurve)();
+
+export const useFilterProgram = () =>
+  createChartHook(getChart.filterProgram)();
