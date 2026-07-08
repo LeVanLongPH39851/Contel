@@ -14,7 +14,8 @@ const HOOKS = [
   { hook: useCallApi.useProgramInfor, dataKey: 'ProgramInfor' },
   { hook: useCallApi.useAverageDropOffByMinute, dataKey: 'AverageDropOffByMinute' },
   { hook: useCallApi.useWatchTimeEfficiencyLast8Weeks, dataKey: 'WatchTimeEfficiencyLast8Weeks' },
-  { hook: useCallApi.useDropOffCurve, dataKey: 'DropOffCurve' }
+  { hook: useCallApi.useDropOffCurve, dataKey: 'DropOffCurve' },
+  { hook: useCallApi.useFilterProgram, dataKey: 'FilterProgram' }
 ];
 
 export const useDashboardData = () => {
