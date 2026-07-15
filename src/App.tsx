@@ -34,7 +34,7 @@ function DashboardContent() {
       name: program, score: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0), status: dashboard.isLoading.ProgramInfor ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 75 ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 55 ? 'maintain' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 35 ? 'review' : 'at-risk', slot: '',
       ret: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0), rv: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0), li: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0), retColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', rvColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', liColor: dashboard.isLoading.ProgramInfor ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)',
       insight: '',
-      curveTitle: `Drop-off Curve · ${program}`,
+      curveTitle: `Drop-off Curve theo thời lượng · ${program}`,
       curveNote: '',
       episodes: dashboard.isLoading.WatchTimeEfficiencyLast8Weeks ? [0, 0, 0, 0, 0, 0, 0, 0] : dashboard?.WatchTimeEfficiencyLast8Weeks?.data?.map((item: any) => (item["AVG(Watch Time Efficiency)"] || 0).toFixed(1)),
       epNote: '',
@@ -136,7 +136,7 @@ function DashboardContent() {
     const month = String(yesterday.getMonth() + 1).padStart(2, "0");
     const year = yesterday.getFullYear();
 
-    return `Cập nhật ${day}/${month}/${year}`;
+    return `${day}/${month}/${year}`;
   }, []);
 
   const onChange = (key, value) => {
@@ -155,7 +155,7 @@ function DashboardContent() {
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
         <div className="nav-right">
-          {tab === 'lineup' && <select className="nav-select" onChange={(e) => onChange("weeks", e.target.value)}>
+          {tab === 'lineup' && <select className="nav-select-2" onChange={(e) => onChange("weeks", e.target.value)}>
             {weekOptions.map((item) => (
               <option key={item.week} value={`Tuần ${item.week} (${item.start} - ${item.end})`}>
                 {`Tuần ${item.week} (${item.start} - ${item.end})`}
@@ -172,13 +172,13 @@ function DashboardContent() {
               </option>
             ))}
           </select>}
-          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.6 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
-          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
-          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
-          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV4' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
-          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV5' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
-          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV6' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
-          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV8' ? 0.6 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
+          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.4 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
+          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
+          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
+          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV4' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
+          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV5' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
+          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV6' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
+          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV8' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
           <div className="nav-date"><span className="live-dot"></span>Cập nhật {updateText} · 09:00</div>
         </div>
       </nav>
@@ -200,8 +200,8 @@ function DashboardContent() {
 
       {/* <!-- TABS --> */}
       <div className="tab-bar">
-        <div className="tab" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Lineup Overview</div>
-        <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Scheduling Dependency</div>
+        <div className="tab" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Tổng quan chương trình</div>
+        <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Quan hệ phụ thuộc trong lịch phát sóng</div>
         {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
         <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
       </div>
@@ -222,13 +222,13 @@ function DashboardContent() {
               {/* <div className="sum-sub">Mức MAINTAIN — theo dõi sát</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Chương trình STRENGTHEN</div>
+              <div className="sum-label">Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
               <div className="sum-val green">{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHEN}</div>
               <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
               {/* <div className="sum-sub">25% tổng lineup</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Chương trình AT RISK</div>
+              <div className="sum-label">Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
               <div className="sum-val red">{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISK}</div>
               <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
               {/* <div className="sum-sub">Cần quyết định trong 2 tuần</div> */}
@@ -454,7 +454,7 @@ function DashboardContent() {
             {/* <!-- Prime Time Chain --> */}
             <div className="section">
               <div className="section-header">
-                <div className="section-title">🌟 Prime Time Chain · 19:00 – 22:30</div>
+                <div className="section-title">🌟 Khung Giờ Vàng · 19:00 – 22:30</div>
                 <div className="section-sub">Thứ 2 – Thứ 6</div>
               </div>
               <div className="section-body">
@@ -472,13 +472,13 @@ function DashboardContent() {
                           {program['% audience thoát ra'] <= 40 && <span className="dep-anchor">ANCHOR</span>}
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                            <div style={{ fontSize: '9px', color: 'var(--text-3)' }}>Audience thoát ra</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
                             <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.PrimeTimeChain19h0022h30.data.length - 1 &&
-                            <><div style={{ textAlign: 'center', fontSize: '18px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% audience tiếp tục xem</div></>
+                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
+                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -535,7 +535,7 @@ function DashboardContent() {
             {/* <!-- Morning Chain --> */}
             <div className="section">
               <div className="section-header">
-                <div className="section-title">🌅 Morning Block · 06:30 – 09:00</div>
+                <div className="section-title">🌅 Khung Buổi Sáng · 06:30 – 09:00</div>
                 <div className="section-sub">Hàng ngày</div>
               </div>
               <div className="section-body">
@@ -554,13 +554,13 @@ function DashboardContent() {
                           {program['% audience thoát ra'] <= 40 && <span className="dep-anchor">ANCHOR</span>}
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                            <div style={{ fontSize: '9px', color: 'var(--text-3)' }}>Audience thoát ra</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
                             <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.MorningBlock06h3009h00.data.length - 1 &&
-                            <><div style={{ textAlign: 'center', fontSize: '18px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '9px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% audience tiếp tục xem</div></>
+                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
+                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -771,7 +771,7 @@ function DashboardContent() {
             </div>
             <div className="section-body">
               <select
-                className="nav-select"
+                className="nav-select-2"
                 onChange={(e) => onChange("programs", e.target.value)}
               >
                 {dashboard?.FilterProgram?.data?.map((program) => (
@@ -785,7 +785,7 @@ function DashboardContent() {
 
           {/* <!-- Program Detail: Rạng Đông (default) --> */}
           <div id="prog-detail">
-            <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '14px', marginBottom: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '14px', marginBottom: '14px' }}>
               {/* <!-- Health Score Card --> */}
               <div className="hs-card">
                 <div className="hs-prog-name" id="prog-name">Rạng Đông</div>
@@ -794,17 +794,17 @@ function DashboardContent() {
                 <div style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '4px' }} id="prog-slot">20:00 – 21:00 · T2–T6</div>
                 <div className="hs-components">
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Retention(40%)</div>
+                    <div className="hs-comp-label">Retention</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-ret" style={{ width: '77%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-ret">77%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Return-Viewer(35%)</div>
+                    <div className="hs-comp-label">Return-Viewer</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-rv" style={{ width: '69%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-rv">69%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Lead-in(25%)</div>
+                    <div className="hs-comp-label">Lead-in</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-li" style={{ width: '74%', background: 'var(--cyan)' }}></div></div>
                     <div className="hs-comp-val" id="val-li">74%</div>
                   </div>
@@ -889,7 +889,7 @@ function DashboardContent() {
             </div>
 
             {/* <!-- Episode Trend + Mini KPIs --> */}
-            <div className="two-col">
+            <div className="two-col-equal">
               <div className="section">
                 <div className="section-header"><div className="section-title" id="ep-trend-title">📈 Retention Trend theo tập · 8 tập gần nhất</div></div>
                 <div className="section-body">
@@ -900,7 +900,7 @@ function DashboardContent() {
                 </div>
               </div>
               <div className="section" style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className="section-header"><div className="section-title">👥 Audience Loyalty Breakdown</div></div>
+                <div className="section-header"><div className="section-title">👥 Chỉ số mức độ trung thành khán giả</div></div>
                 <div className="section-body" style={{ flex: 1 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: "100%" }}>
                     <div className="mini-kpi">
