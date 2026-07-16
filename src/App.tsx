@@ -864,10 +864,17 @@ function DashboardContent() {
                       const dLine = `M0,${180 - (data[0]['AVG(dropoff_rate_by_view)'] * 180)} L${pathPoints.join(' L')}`;
                       const dArea = `${dLine} L700,180 L0,180Z`;
 
+                      const formatTime = (minutes: number) => {
+                        const totalSeconds = Math.round(minutes * 60);
+                        const m = Math.floor(totalSeconds / 60);
+                        const s = totalSeconds % 60;
+                        return `${m}:${String(s).padStart(2, '0')}`;
+                      };
+
                       const labels = [0, 1, 2, 3, 4].map(i => {
-                        const val = Math.round(maxMin * (i / 4));
+                        const minuteValue = maxMin * (i / 4);
                         const x = i * 165;
-                        return <text key={i} x={x} y="175" fill="#979cb8" fontSize="8" fontFamily="monospace">{val}:00</text>;
+                        return <text key={i} x={x} y="175" fill="#979cb8" fontSize="8" fontFamily="monospace">{formatTime(minuteValue)}</text>;
                       });
 
                       return (
