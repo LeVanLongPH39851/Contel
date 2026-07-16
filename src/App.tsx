@@ -32,17 +32,17 @@ function DashboardContent() {
   const programs = useMemo(() => ({
     [toSlug(program)]: {
       name: program, score: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0), status: dashboard.isLoading.ProgramInfor ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 75 ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 55 ? 'maintain' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 35 ? 'review' : 'at-risk', slot: '',
-      ret: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0), rv: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0), li: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0), retColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', rvColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', liColor: dashboard.isLoading.ProgramInfor ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)',
+      ret: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) || 'nodata', rv: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) || 'nodata', li: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) || 'nodata', retColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', rvColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', liColor: dashboard.isLoading.ProgramInfor ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)',
       insight: '',
       curveTitle: `Drop-off Curve theo thời lượng · ${program}`,
       curveNote: '',
       episodes: dashboard.isLoading.WatchTimeEfficiencyLast8Weeks ? [0, 0, 0, 0, 0, 0, 0, 0] : dashboard?.WatchTimeEfficiencyLast8Weeks?.data?.map((item: any) => (item["AVG(Watch Time Efficiency)"] || 0).toFixed(1)),
       epNote: '',
-      rvr: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(1) + '%', rvrSub: '',
-      loyal: dashboard.isLoading.AverageDropOffByMinute ? 'Loading...' : dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"]?.toFixed(1) + '%', loyalSub: '',
-      newv: dashboard.isLoading.ProgramInfor ? 'Loading...' : (100 - dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0)?.toFixed(1) + '%', newSub: '',
-      leadin: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(1) + '%', leadinSub: '',
-      epTitle: `📈 Retention Trend theo tập · 8 tuần gần nhất · ${program}`,
+      rvr: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(1) || 'nodata' + '%', rvrSub: '',
+      loyal: dashboard.isLoading.AverageDropOffByMinute ? 'Loading...' : dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"]?.toFixed(1) || 'nodata' + '%', loyalSub: '',
+      newv: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] ? (100 - dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0)?.toFixed(1) + '%' : 'nodata' + '%', newSub: '',
+      leadin: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(1) || 'nodata' + '%', leadinSub: '',
+      epTitle: `📈 WTE Trend theo tập · 8 tuần gần nhất · ${program}`,
     }
   }), [program, dashboard.isLoading.ProgramInfor, dashboard.isLoading.AverageDropOffByMinute, dashboard.isLoading.WatchTimeEfficiencyLast8Weeks]);
 
@@ -300,10 +300,10 @@ function DashboardContent() {
                         <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'text' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">↑ +1.4pp</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 55 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 45 ? 'text' : program['Return Viewer Rate']?.toFixed(1) > 30 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 70 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 60 ? 'text' : program['Return Viewer Rate']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">Loyal base cao</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 35 ? 'text' : program['Lead-in Effect']?.toFixed(1) > 18 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 60 ? 'text' : program['Lead-in Effect']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">→ Phim VTV1 20h</div> */}
                         </td>
                         {/* <td style={{ fontSize: '10px', color: 'var(--green)' }}>Đề xuất nâng tier giá slot QC</td> */}
@@ -903,7 +903,7 @@ function DashboardContent() {
             {/* <!-- Episode Trend + Mini KPIs --> */}
             <div className="two-col-equal">
               <div className="section">
-                <div className="section-header"><div className="section-title" id="ep-trend-title">📈 Retention Trend theo tập · 8 tuần gần nhất</div></div>
+                <div className="section-header"><div className="section-title" id="ep-trend-title">📈 WTE Trend theo tập · 8 tuần gần nhất</div></div>
                 <div className="section-body">
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '250px', paddingBottom: '4px' }} id="episode-bars">
                   </div>
