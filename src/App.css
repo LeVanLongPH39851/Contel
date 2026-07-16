@@ -518,7 +518,7 @@ body::before {
 }
 
 .health-table tr:hover td {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .prog-name {
