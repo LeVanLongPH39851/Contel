@@ -38,10 +38,10 @@ function DashboardContent() {
       curveNote: '',
       episodes: dashboard.isLoading.WatchTimeEfficiencyLast8Weeks ? [0, 0, 0, 0, 0, 0, 0, 0] : dashboard?.WatchTimeEfficiencyLast8Weeks?.data?.map((item: any) => (item["AVG(Watch Time Efficiency)"] || 0).toFixed(1)),
       epNote: '',
-      rvr: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(1) || 'nodata' + '%', rvrSub: '',
-      loyal: dashboard.isLoading.AverageDropOffByMinute ? 'Loading...' : dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"]?.toFixed(1) || 'nodata' + '%', loyalSub: '',
+      rvr: dashboard.isLoading.ProgramInfor ? 'Loading...' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(1) || 'nodata') + '%', rvrSub: '',
+      loyal: dashboard.isLoading.AverageDropOffByMinute ? 'Loading...' : (dashboard?.AverageDropOffByMinute?.data?.[0]?.["AVG(avg_dropoff_by_view)*100*60"]?.toFixed(1) || 'nodata') + '%', loyalSub: '',
       newv: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] ? (100 - dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0)?.toFixed(1) + '%' : 'nodata' + '%', newSub: '',
-      leadin: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(1) || 'nodata' + '%', leadinSub: '',
+      leadin: dashboard.isLoading.ProgramInfor ? 'Loading...' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(1) || 'nodata') + '%', leadinSub: '',
       epTitle: `📈 WTE Trend theo tập · 8 tuần gần nhất · ${program}`,
     }
   }), [program, dashboard.isLoading.ProgramInfor, dashboard.isLoading.AverageDropOffByMinute, dashboard.isLoading.WatchTimeEfficiencyLast8Weeks]);
