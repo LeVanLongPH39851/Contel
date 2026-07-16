@@ -271,7 +271,7 @@ function DashboardContent() {
                   :
                   <tbody>
                     {/* <!-- STRENGTHEN --> */}
-                    {dashboard.ProgramHealthScorecard.data.map((program: any) => (
+                    {dashboard?.ProgramHealthScorecard?.data?.map((program: any) => (
                       < tr onClick={() => { setAppliedFilters({ ...appliedFilters, programs: [program.program_name] }); setTab('program'); setSelectedProgramSlug(toSlug(program.program_name)); }} style={{ cursor: 'pointer' }}>
                         <td style={{ paddingLeft: '16px' }}>
                           <div className="prog-name">{program.program_name}</div>
