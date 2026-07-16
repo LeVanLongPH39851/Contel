@@ -163,7 +163,7 @@ function DashboardContent() {
             ))}
           </select>}
           {tab !== 'lineup' && <select
-            className="nav-select"
+            className="nav-select-2"
             onChange={(e) => onChange("dates", e.target.value)}
           >
             {dates.map((date) => (
@@ -455,7 +455,7 @@ function DashboardContent() {
             <div className="section">
               <div className="section-header">
                 <div className="section-title">🌟 Khung Giờ Vàng · 19:00 – 22:30</div>
-                <div className="section-sub">Thứ 2 – Thứ 6</div>
+                <div className="section-sub">Hàng ngày</div>
               </div>
               <div className="section-body">
                 <div className="dep-map">
