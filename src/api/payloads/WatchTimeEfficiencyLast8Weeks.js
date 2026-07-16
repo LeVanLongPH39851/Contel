@@ -24,11 +24,6 @@ export const WatchTimeEfficiencyLast8Weeks = {
                         ]
                     },
                     {
-                        "col": "start_of_week",
-                        "op": "TEMPORAL_RANGE",
-                        "val": "No filter"
-                    },
-                    {
                         "col": "filter_w",
                         "op": "IN",
                         "val": [
@@ -117,9 +112,7 @@ export const WatchTimeEfficiencyLast8Weeks = {
                 "series_columns": [],
                 "series_limit": 0,
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "time_offsets": [],
@@ -149,9 +142,7 @@ export const WatchTimeEfficiencyLast8Weeks = {
             "datasource": "286__table",
             "viz_type": "echarts_timeseries_bar",
             "slice_id": 943,
-            "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-            },
+            "url_params": {},
             "x_axis": "start_of_week",
             "x_axis_sort_asc": true,
             "x_axis_sort_series": "name",
@@ -271,11 +262,10 @@ export const WatchTimeEfficiencyLast8Weeks = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9"
             },
             "own_color_scheme": "supersetColors",
             "extra_filters": [],

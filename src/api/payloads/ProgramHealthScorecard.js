@@ -1,8 +1,8 @@
 export const ProgramHealthScorecard = {
-    url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A934%7D&dashboard_id=68`,
+    url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A1019%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 286,
+            "id": 303,
             "type": "table"
         },
         "force": false,
@@ -22,11 +22,6 @@ export const ProgramHealthScorecard = {
                         "val": [
                             "1 weeks"
                         ]
-                    },
-                    {
-                        "col": "start_of_week",
-                        "op": "TEMPORAL_RANGE",
-                        "val": "No filter"
                     }
                 ],
                 "extras": {
@@ -73,9 +68,7 @@ export const ProgramHealthScorecard = {
                     "sqlExpression": "`Content Health Score`"
                 },
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -83,12 +76,10 @@ export const ProgramHealthScorecard = {
             }
         ],
         "form_data": {
-            "datasource": "286__table",
+            "datasource": "303__table",
             "viz_type": "table",
-            "slice_id": 934,
-            "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-            },
+            "slice_id": 1019,
+            "url_params": {},
             "query_mode": "aggregate",
             "groupby": [
                 "program_name",
@@ -178,15 +169,14 @@ export const ProgramHealthScorecard = {
                     }
                 ]
             },
-            "chart_id": 934,
+            "chart_id": 1019,
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,

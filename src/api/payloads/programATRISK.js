@@ -22,11 +22,6 @@ export const programATRISK = {
                         "val": [
                             "AT RISK"
                         ]
-                    },
-                    {
-                        "col": "start_of_week",
-                        "op": "TEMPORAL_RANGE",
-                        "val": "No filter"
                     }
                 ],
                 "extras": {
@@ -74,9 +69,7 @@ export const programATRISK = {
                 "annotation_layers": [],
                 "series_limit": 0,
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [
@@ -105,9 +98,7 @@ export const programATRISK = {
             "datasource": "286__table",
             "viz_type": "big_number",
             "slice_id": 937,
-            "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-            },
+            "url_params": {},
             "x_axis": "start_of_week",
             "metric": {
                 "aggregate": "COUNT",
@@ -192,11 +183,10 @@ export const programATRISK = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,

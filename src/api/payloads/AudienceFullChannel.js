@@ -18,6 +18,13 @@ export const AudienceFullChannel = {
                         ]
                     },
                     {
+                        "col": "platform",
+                        "op": "IN",
+                        "val": [
+                            "Big Screen"
+                        ]
+                    },
+                    {
                         "col": "date",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
@@ -144,9 +151,7 @@ export const AudienceFullChannel = {
                 "row_limit": 1,
                 "series_limit": 0,
                 "order_desc": false,
-                "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -157,9 +162,7 @@ export const AudienceFullChannel = {
             "datasource": "288__table",
             "viz_type": "table",
             "slice_id": 942,
-            "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-            },
+            "url_params": {},
             "query_mode": "aggregate",
             "groupby": [],
             "temporal_columns_lookup": {
@@ -250,9 +253,29 @@ export const AudienceFullChannel = {
             "adhoc_filters": [
                 {
                     "clause": "WHERE",
-                    "comparator": "No filter",
+                    "comparator": [
+                        "Big Screen"
+                    ],
+                    "datasourceWarning": false,
                     "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_zyuskzmfv99_9bohhzaq6ij",
+                    "isExtra": false,
+                    "isNew": false,
+                    "operator": "IN",
+                    "operatorId": "IN",
+                    "sqlExpression": null,
+                    "subject": "platform"
+                },
+                {
+                    "clause": "WHERE",
+                    "comparator": "No filter",
+                    "datasourceWarning": false,
+                    "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_nddeo2qa0q_9sldo8fgq74",
+                    "isExtra": true,
+                    "isNew": false,
                     "operator": "TEMPORAL_RANGE",
+                    "sqlExpression": null,
                     "subject": "date"
                 }
             ],
@@ -289,11 +312,10 @@ export const AudienceFullChannel = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,

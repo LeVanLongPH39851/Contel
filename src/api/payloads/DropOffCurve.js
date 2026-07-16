@@ -109,9 +109,7 @@ export const DropOffCurve = {
                 "series_columns": [],
                 "series_limit": 0,
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "time_offsets": [],
@@ -141,9 +139,7 @@ export const DropOffCurve = {
             "datasource": "293__table",
             "viz_type": "echarts_area",
             "slice_id": 927,
-            "url_params": {
-                "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-            },
+            "url_params": {},
             "x_axis": "minute_index",
             "xAxisForceCategorical": false,
             "x_axis_sort_asc": true,
@@ -258,9 +254,7 @@ export const DropOffCurve = {
                 "REVIEW": "#454E7C",
                 "MAINTAIN": "#5AC189",
                 "STRENGTHEN": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9"
             },
             "own_color_scheme": "supersetColors",
             "extra_filters": [],
