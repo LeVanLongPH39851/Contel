@@ -2,7 +2,7 @@ export const ProgramInfor = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A931%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 292,
+            "id": 304,
             "type": "table"
         },
         "force": false,
@@ -121,9 +121,7 @@ export const ProgramInfor = {
                 "row_limit": 10000,
                 "series_limit": 0,
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -131,12 +129,10 @@ export const ProgramInfor = {
             }
         ],
         "form_data": {
-            "datasource": "292__table",
+            "datasource": "304__table",
             "viz_type": "table",
             "slice_id": 931,
-            "url_params": {
-                "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-            },
+            "url_params": {},
             "query_mode": "aggregate",
             "groupby": [],
             "temporal_columns_lookup": {},
@@ -269,9 +265,7 @@ export const ProgramInfor = {
                 "REVIEW": "#454E7C",
                 "MAINTAIN": "#5AC189",
                 "STRENGTHEN": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,

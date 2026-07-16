@@ -2,7 +2,7 @@ export const AverageDropOffByMinute = {
     url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A930%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 292,
+            "id": 304,
             "type": "table"
         },
         "force": false,
@@ -51,20 +51,16 @@ export const AverageDropOffByMinute = {
                 "annotation_layers": [],
                 "series_limit": 0,
                 "order_desc": true,
-                "url_params": {
-                    "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {}
             }
         ],
         "form_data": {
-            "datasource": "292__table",
+            "datasource": "304__table",
             "viz_type": "big_number_total",
             "slice_id": 930,
-            "url_params": {
-                "native_filters_key": "SY4PLTihKGOd9f-qU6Q4CLj5cK01JXbrM35pSzihmlwjEUSLBgXnfYHEkEQEoeBv"
-            },
+            "url_params": {},
             "metric": {
                 "aggregate": null,
                 "column": null,
@@ -123,9 +119,7 @@ export const AverageDropOffByMinute = {
                 "REVIEW": "#454E7C",
                 "MAINTAIN": "#5AC189",
                 "STRENGTHEN": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AVG(Watch Time Efficiency)": "#1FA8C9"
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,

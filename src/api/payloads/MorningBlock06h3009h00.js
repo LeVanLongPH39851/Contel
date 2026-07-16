@@ -28,6 +28,13 @@ export const MorningBlock06h3009h00 = {
                         "val": "06:30:00"
                     },
                     {
+                        "col": "platform",
+                        "op": "IN",
+                        "val": [
+                            "Big Screen"
+                        ]
+                    },
+                    {
                         "col": "date",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
@@ -103,9 +110,7 @@ export const MorningBlock06h3009h00 = {
                     "sqlExpression": "program_order"
                 },
                 "order_desc": false,
-                "url_params": {
-                    "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-                },
+                "url_params": {},
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -116,9 +121,7 @@ export const MorningBlock06h3009h00 = {
             "datasource": "288__table",
             "viz_type": "table",
             "slice_id": 941,
-            "url_params": {
-                "native_filters_key": "knRZmmYE3hO796xmRHK8xceKtBQ9ULgL99ZWYSIVRoUrc8TsGZdln8f8zxIuB8HE"
-            },
+            "url_params": {},
             "query_mode": "aggregate",
             "groupby": [
                 "program_order",
@@ -135,8 +138,7 @@ export const MorningBlock06h3009h00 = {
                 }
             ],
             "temporal_columns_lookup": {
-                "date": true,
-                "start_of_week": true
+                "date": true
             },
             "metrics": [
                 {
@@ -191,10 +193,29 @@ export const MorningBlock06h3009h00 = {
                 },
                 {
                     "clause": "WHERE",
-                    "comparator": "No filter",
+                    "comparator": [
+                        "Big Screen"
+                    ],
+                    "datasourceWarning": false,
                     "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_9jwuz3gs6ij_jbq6izsdl5l",
+                    "isExtra": false,
+                    "isNew": false,
+                    "operator": "IN",
+                    "operatorId": "IN",
+                    "sqlExpression": null,
+                    "subject": "platform"
+                },
+                {
+                    "clause": "WHERE",
+                    "comparator": "No filter",
+                    "datasourceWarning": false,
+                    "expressionType": "SIMPLE",
+                    "filterOptionName": "filter_hl8jiwfx8v_tcvpdr5ivvm",
                     "isExtra": true,
+                    "isNew": false,
                     "operator": "TEMPORAL_RANGE",
+                    "sqlExpression": null,
                     "subject": "date"
                 }
             ],
@@ -239,11 +260,10 @@ export const MorningBlock06h3009h00 = {
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {
-                "AVG(Watch Time Efficiency)": "#1FA8C9",
-                "AVG(dropoff_rate_by_view)": "#1FA8C9",
-                "AT RISK": "#1FA8C9",
                 "REVIEW": "#454E7C",
-                "MAINTAIN": "#5AC189"
+                "MAINTAIN": "#5AC189",
+                "STRENGTHEN": "#1FA8C9",
+                "AT RISK": "#1FA8C9"
             },
             "extra_filters": [],
             "force": false,
