@@ -158,6 +158,9 @@ function DashboardContent() {
     setAppliedFilters({ ...appliedFilters, [key]: [value] });
   }
 
+  const selectedWeek = appliedFilters?.weeks?.[0] || (weekOptions[0] ? `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : '');
+  const selectedDate = appliedFilters?.dates?.[0] || (dates[0]?.value || '');
+
   return (
     <>
       {/* <!-- NAV --> */}
@@ -167,15 +170,19 @@ function DashboardContent() {
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
         <div className="nav-right">
-          {tab === 'lineup' && <select className="nav-select-2" onChange={(e) => onChange("weeks", e.target.value)}>
-            {weekOptions.map((item) => (
-              <option key={item.week} value={`Tuần ${item.week} (${item.start} - ${item.end})`}>
-                {`Tuần ${item.week} (${item.start} - ${item.end})`}
-              </option>
-            ))}
+          {tab === 'lineup' && <select className="nav-select-2" value={selectedWeek} onChange={(e) => onChange("weeks", e.target.value)}>
+            {weekOptions.map((item) => {
+              const optionValue = `Tuần ${item.week} (${item.start} - ${item.end})`;
+              return (
+                <option key={item.week} value={optionValue}>
+                  {optionValue}
+                </option>
+              );
+            })}
           </select>}
           {tab !== 'lineup' && <select
             className="nav-select-2"
+            value={selectedDate}
             onChange={(e) => onChange("dates", e.target.value)}
           >
             {dates.map((date) => (
@@ -236,13 +243,13 @@ function DashboardContent() {
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
               <div className="sum-val green">{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHEN}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'down' : 'up'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
               {/* <div className="sum-sub">25% tổng lineup</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
               <div className="sum-val red">{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISK}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : 'up'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
               {/* <div className="sum-sub">Cần quyết định trong 2 tuần</div> */}
             </div>
             <div className="sum-card">
