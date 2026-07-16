@@ -62,3 +62,6 @@ export const DropOffCurve = (appliedFilters) =>
 
 export const filterProgram = (appliedFilters) =>
   postChart(payloads.filterProgram, appliedFilters, ['weekFilters', 'dateFilters', 'programFilters']);
+
+export const ContentHealthScoreReport = (appliedFilters) =>
+  postChart(payloads.ContentHealthScoreReport, appliedFilters, ['weekFilters']);

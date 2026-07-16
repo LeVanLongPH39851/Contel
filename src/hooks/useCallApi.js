@@ -57,3 +57,6 @@ export const useDropOffCurve = () =>
 
 export const useFilterProgram = () =>
   createChartHook(getChart.filterProgram)();
+
+export const useContentHealthScoreReport = () =>
+  createChartHook(getChart.ContentHealthScoreReport)();
