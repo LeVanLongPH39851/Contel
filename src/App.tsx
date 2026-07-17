@@ -1102,7 +1102,7 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '250px', overflowY: 'auto', padding: '12px', background: '#1c2130', borderRadius: '8px', border: '1px solid #333' }}>
                 {filteredProgramsForSelect.map((programItem: any) => {
-                  const isSelected = appliedFilters?.programMultiples ? appliedFilters?.programMultiples?.includes(programItem.program_name) : programItem.program_name === 'THỜI SỰ 19H';
+                  const isSelected = appliedFilters?.programMultiples?.includes(programItem.program_name);
                   return (
                     <div
                       key={programItem.program_name}
