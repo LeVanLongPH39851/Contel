@@ -18,13 +18,6 @@ export const ContentHealthScoreReport = {
                         ]
                     },
                     {
-                        "col": "program_name",
-                        "op": "IN",
-                        "val": [
-                            "THỜI SỰ 19H"
-                        ]
-                    },
-                    {
                         "col": "date",
                         "op": "TEMPORAL_RANGE",
                         "val": "No filter"
