@@ -46,12 +46,16 @@ function DashboardContent() {
     }
   }), [program, dashboard.isLoading.ProgramInfor, dashboard.isLoading.AverageDropOffByMinute, dashboard.isLoading.WatchTimeEfficiencyLast8Weeks]);
 
+  const [reportSearchQuery, setReportSearchQuery] = useState("");
+  const [scorecardSearchQuery, setScorecardSearchQuery] = useState("");
+  const [programSearchQuery, setProgramSearchQuery] = useState("");
+
   useEffect(() => {
     if (!dashboard.isLoading.ProgramHealthScorecard) {
       Object.keys(sparkData).forEach(k => drawSparkline(k, sparkData[k].d, sparkData[k].c));
     }
     init(programs);
-  }, [dashboard.isLoading.ProgramHealthScorecard, programs]);
+  }, [dashboard.isLoading.ProgramHealthScorecard, programs, scorecardSearchQuery]);
 
   const [selectedProgramSlug, setSelectedProgramSlug] = useState(null);
 
@@ -161,10 +165,6 @@ function DashboardContent() {
   const selectedWeek = appliedFilters?.weeks?.[0] || (weekOptions[0] ? `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : '');
   const selectedDate = appliedFilters?.dates?.[0] || (dates[0]?.value || '');
 
-  const [reportSearchQuery, setReportSearchQuery] = useState("");
-  const [scorecardSearchQuery, setScorecardSearchQuery] = useState("");
-  const [programSearchQuery, setProgramSearchQuery] = useState("");
-
   const filteredProgramsForSelect = useMemo(() => {
     const data = dashboard?.FilterProgram?.data;
     if (!data) return [];
@@ -232,7 +232,7 @@ function DashboardContent() {
               );
             })}
           </select>}
-          {tab !== 'lineup' && <input
+          {tab !== 'lineup' && tab !== 'report' && <input
             type="date"
             className="nav-select-2"
             value={selectedDate}
@@ -240,13 +240,79 @@ function DashboardContent() {
             min={dates[dates.length - 1]?.value}
             max={dates[0]?.value}
           />}
-          <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.4 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
-          <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
-          <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
-          <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV4' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
-          <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV5' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
-          <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV6' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
-          <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV8' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div>
+          {tab === 'report' && <><input
+            type="date"
+            className="nav-select-2"
+            value={appliedFilters?.startDate?.[0] || dates[0]?.value}
+            onChange={(e) => setAppliedFilters({ ...appliedFilters, startDate: [e.target.value] })}
+            min={dates[dates.length - 1]?.value}
+            max={appliedFilters?.endDate?.[0] || dates[0]?.value}
+          />
+            <input
+              type="date"
+              className="nav-select-2"
+              value={appliedFilters?.endDate?.[0] || dates[0]?.value}
+              onChange={(e) => setAppliedFilters({ ...appliedFilters, endDate: [e.target.value] })}
+              min={appliedFilters?.startDate?.[0] || dates[0]?.value}
+              max={dates[0]?.value}
+            />
+          </>}
+          {tab !== 'report' ? <><div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.4 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
+            <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
+            <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
+            <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV4' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV4'] }); }}>VTV4</div>
+            <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV5' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV5'] }); }}>VTV5</div>
+            <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV6' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV6'] }); }}>VTV6</div>
+            <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV8' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV8'] }); }}>VTV8</div></> : <>
+            <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channelMultiples === undefined || appliedFilters?.channelMultiples?.includes("VTV1") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV1")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV1")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV1"]
+              });
+            }}>VTV1</div>
+            <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV2") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV2")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV2")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV2"]
+              });
+            }}>VTV2</div>
+            <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV3") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV3")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV3")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV3"]
+              });
+            }}>VTV3</div>
+            <div className="nav-channel-vtv4" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV4") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV4")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV4")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV4"]
+              });
+            }}>VTV4</div>
+            <div className="nav-channel-vtv5" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV5") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV5")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV5")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV5"]
+              });
+            }}>VTV5</div>
+            <div className="nav-channel-vtv6" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV6") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV6")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV6")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV6"]
+              });
+            }}>VTV6</div>
+            <div className="nav-channel-vtv8" style={{ opacity: appliedFilters?.channelMultiples?.includes("VTV8") ? 1 : 0.4 }} onClick={() => {
+              setAppliedFilters({
+                ...appliedFilters, channelMultiples: appliedFilters?.channelMultiples?.includes("VTV8")
+                  ? appliedFilters.channelMultiples.filter((c) => c !== "VTV8")
+                  : [...(appliedFilters?.channelMultiples || []), "VTV8"]
+              });
+            }}>VTV8</div></>}
           <div className="nav-date"><span className="live-dot"></span>Cập nhật {updateText} · 09:00</div>
         </div>
       </nav>
@@ -849,7 +915,7 @@ function DashboardContent() {
             </div>
             <div className="section-body">
               <select
-                className="nav-select-2"
+                className="nav-select-3"
                 onChange={(e) => onChange("programs", e.target.value)}
               >
                 {dashboard?.FilterProgram?.data?.map((programItem) => (
@@ -1036,7 +1102,7 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '250px', overflowY: 'auto', padding: '12px', background: '#1c2130', borderRadius: '8px', border: '1px solid #333' }}>
                 {filteredProgramsForSelect.map((programItem: any) => {
-                  const isSelected = appliedFilters?.programMultiples?.includes(programItem.program_name);
+                  const isSelected = appliedFilters?.programMultiples ? appliedFilters?.programMultiples?.includes(programItem.program_name) : programItem.program_name === 'THỜI SỰ 19H';
                   return (
                     <div
                       key={programItem.program_name}
