@@ -108,6 +108,14 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
       }),
     },
     {
+      key: 'programs',
+      disabledKey: 'programMultipleFilters',
+      build: () => buildQueriesFilters({
+        column: 'program_name',
+        values: filterState.programMultiples
+      }),
+    },
+    {
       key: 'adCodes',
       disabledKey: 'adCodeFilters',
       build: () => buildQueriesFilters({
@@ -195,10 +203,10 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
         !disabledFilters.includes(disabledKey) &&
         !disabledFilters.includes('allFilters')
       ) {
-        if (builtFilter[0].col === 'channel_name_tvd') {
+        if (builtFilter[0].col === 'channel_name_tvd' && !disabledFilters.includes('channelFilters')) {
           newFilters = newFilters.filter(f => f.col !== 'channel_name_tvd')
         }
-        if (builtFilter[0].col === 'program_name') {
+        if (builtFilter[0].col === 'program_name' && !disabledFilters.includes('programFilters')) {
           newFilters = newFilters.filter(f => f.col !== 'program_name')
         }
         newFilters = appendFilters(newFilters, builtFilter);
