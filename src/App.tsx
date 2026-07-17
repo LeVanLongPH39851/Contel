@@ -10,14 +10,14 @@ function DashboardContent() {
   const dashboard = useDashboardData();
   const { appliedFilters, setAppliedFilters } = useDashboardFilters();
   const [tab, setTab] = useState('lineup');
-  const AvgHealthScore = dashboard.isLoading.AvgHealthScore ? null : dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)']?.toFixed(2);
-  const AvgHealthScoreDelta = dashboard.isLoading.AvgHealthScore ? null : ((dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)'] - dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)']) * 100 / dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)'])?.toFixed(2);
+  const AvgHealthScore = dashboard.isLoading.AvgHealthScore ? null : dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)']?.toFixed(2) || 0;
+  const AvgHealthScoreDelta = dashboard.isLoading.AvgHealthScore ? null : ((dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 1]?.['AVG(Content Health Score)'] - dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)']) * 100 / dashboard?.AvgHealthScore?.data?.[dashboard?.AvgHealthScore?.data?.length - 2]?.['AVG(Content Health Score)'])?.toFixed(2) || 0;
   const AvgRetentionRate = dashboard.isLoading.AvgRetentionRate ? null : dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 1]?.['AVG(Watch Time Efficiency)']?.toFixed(2);
   const AvgRetentionRateDelta = dashboard.isLoading.AvgRetentionRate ? null : ((dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 1]?.['AVG(Watch Time Efficiency)'] - dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 2]?.['AVG(Watch Time Efficiency)']) * 100 / dashboard?.AvgRetentionRate?.data?.[dashboard?.AvgRetentionRate?.data?.length - 2]?.['AVG(Watch Time Efficiency)'])?.toFixed(2);
   const programSTRENGTHEN = dashboard.isLoading.programSTRENGTHEN ? null : dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 1]?.['COUNT(status)'] || 0;
   const programSTRENGTHENDelta = dashboard.isLoading.programSTRENGTHEN ? null : (dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 1]?.['COUNT(status)'] - dashboard?.programSTRENGTHEN?.data?.[dashboard?.programSTRENGTHEN?.data?.length - 2]?.['COUNT(status)']) || 0;
-  const programATRISK = dashboard.isLoading.programATRISK ? null : dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'];
-  const programATRISKDelta = dashboard.isLoading.programATRISK ? null : (dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'] - dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 2]?.['COUNT(status)']);
+  const programATRISK = dashboard.isLoading.programATRISK ? null : dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'] || 0;
+  const programATRISKDelta = dashboard.isLoading.programATRISK ? null : (dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 1]?.['COUNT(status)'] - dashboard?.programATRISK?.data?.[dashboard?.programATRISK?.data?.length - 2]?.['COUNT(status)']) || 0;
   const AvgReturnViewerRate = dashboard.isLoading.AvgReturnViewerRate ? null : dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 1]?.['AVG(Return Viewer Rate)']?.toFixed(2);
   const AvgReturnViewerRateDelta = dashboard.isLoading.AvgReturnViewerRate ? null : ((dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 1]?.['AVG(Return Viewer Rate)'] - dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 2]?.['AVG(Return Viewer Rate)']) * 100 / dashboard?.AvgReturnViewerRate?.data?.[dashboard?.AvgReturnViewerRate?.data?.length - 2]?.['AVG(Return Viewer Rate)'])?.toFixed(2);
   // ── Sparkline data ──
@@ -223,6 +223,7 @@ function DashboardContent() {
         <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Quan hệ phụ thuộc trong lịch phát sóng</div>
         {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
         <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
+        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Contel Health Report</div>
       </div>
 
       <div className="main">
@@ -243,13 +244,13 @@ function DashboardContent() {
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
               <div className="sum-val green">{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHEN}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : programSTRENGTHENDelta < 0 ? 'down' : 'flat'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
               {/* <div className="sum-sub">25% tổng lineup</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
               <div className="sum-val red">{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISK}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : 'up'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : programATRISKDelta < 0 ? 'up' : 'flat'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
               {/* <div className="sum-sub">Cần quyết định trong 2 tuần</div> */}
             </div>
             <div className="sum-card">
@@ -957,6 +958,87 @@ function DashboardContent() {
 
         </div>
         {/* <!-- /tab-program --> */}
+
+
+        {/* <!-- ══════════════════════════════
+        TAB 1 — LINEUP OVERVIEW
+══════════════════════════════ --> */}
+        <div className="view" id="tab-report">
+
+          {/* <!-- Program Health Table --> */}
+          <div className="section">
+            <div className="section-header">
+              <div className="section-title">📊 Contel Health Report</div>
+            </div>
+            <div className="section-body" style={{ padding: '0' }}>
+              <table className="health-table">
+                <thead>
+                  <tr>
+                    <th style={{ paddingLeft: '16px' }}>Ngày</th>
+                    <th>Thời gian</th>
+                    <th>Kênh</th>
+                    <th>Chương trình</th>
+                    <th>Thể loại</th>
+                    <th>Frequency</th>
+                    <th>Thời lượng</th>
+                    <th>Health Score</th>
+                    <th>WTE</th>
+                    <th>RTR</th>
+                    <th>Lead-in</th>
+                    <th>Drop-off</th>
+                  </tr>
+                </thead>
+                {dashboard.isLoading.ContentHealthScoreReport ? <tr><td colSpan={12} style={{ padding: '16px', textAlign: 'center' }}>Loading...</td></tr>
+                  :
+                  <tbody>
+                    {/* <!-- STRENGTHEN --> */}
+                    {dashboard?.ContentHealthScoreReport?.data?.map((program: any) => (
+                      <tr>
+                        <td style={{ paddingLeft: '16px' }}>
+                          <div>{new Date(program.date).toLocaleDateString("vi-VN")}</div>
+                        </td>
+                        <td>
+                          <div>{new Date(program.event_start_timestamp).toLocaleTimeString("vi-VN")}</div>
+                        </td>
+                        <td>
+                          <div>{program.channel_name_tvd}</div>
+                        </td>
+                        <td>
+                          <div className='prog-name'>{program.program_name}</div>
+                        </td>
+                        <td>
+                          <div>{program.typo_first}</div>
+                        </td>
+                        <td>
+                          <div>{program.frequency}</div>
+                        </td>
+                        <td>
+                          <div>{program.duration}</div>
+                        </td>
+
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) > 70 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) > 60 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) > 40 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) > 70 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) > 60 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) > 40 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
+                          </div>
+                        </td>
+                        
+                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'text' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'text' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'text' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num text`}>{(Number(program['Drop-off theo phút']) * 100).toFixed(2)}%</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>}
+              </table>
+            </div>
+          </div>
+
+        </div>
+        {/* <!-- /tab-lineup --> */}
 
       </div >
       {/* <!-- /main --> */}
