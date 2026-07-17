@@ -1,7 +1,7 @@
 // ── Tab switching ──
 export const switchTab = (name) => {
     document.querySelectorAll('.tab').forEach((t, i) => {
-        const ids = ['lineup', 'dependency', 'program', 'insights'];
+        const ids = ['lineup', 'dependency', 'program', 'report'];
         t.classList.toggle('active', ids[i] === name);
     });
     document.querySelectorAll('.view').forEach(v => {
