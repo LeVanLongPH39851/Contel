@@ -22,46 +22,46 @@ const postChart = async (basePayload, appliedFilters, disibledFilters = []) => {
 };
 
 export const AvgHealthScore = (appliedFilters) =>
-  postChart(payloads.AvgHealthScore, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.AvgHealthScore, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const AvgRetentionRate = (appliedFilters) =>
-  postChart(payloads.AvgRetentionRate, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.AvgRetentionRate, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const AvgReturnViewerRate = (appliedFilters) =>
-  postChart(payloads.AvgReturnViewerRate, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.AvgReturnViewerRate, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const programATRISK = (appliedFilters) =>
-  postChart(payloads.programATRISK, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.programATRISK, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const ProgramHealthScorecard = (appliedFilters) =>
-  postChart(payloads.ProgramHealthScorecard, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.ProgramHealthScorecard, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const programSTRENGTHEN = (appliedFilters) =>
-  postChart(payloads.programSTRENGTHEN, appliedFilters, ['programFilters', 'dateFilters']);
+  postChart(payloads.programSTRENGTHEN, appliedFilters, ['programFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const MorningBlock06h3009h00 = (appliedFilters) =>
-  postChart(payloads.MorningBlock06h3009h00, appliedFilters, ['programFilters', 'weekFilters']);
+  postChart(payloads.MorningBlock06h3009h00, appliedFilters, ['programFilters', 'weekFilters', 'programMultipleFilters']);
 
 export const PrimeTimeChain19h0022h30 = (appliedFilters) =>
-  postChart(payloads.PrimeTimeChain19h0022h30, appliedFilters, ['programFilters', 'weekFilters']);
+  postChart(payloads.PrimeTimeChain19h0022h30, appliedFilters, ['programFilters', 'weekFilters', 'programMultipleFilters']);
 
 export const AudienceFullChannel = (appliedFilters) =>
-  postChart(payloads.AudienceFullChannel, appliedFilters, ['programFilters', 'weekFilters']);
+  postChart(payloads.AudienceFullChannel, appliedFilters, ['programFilters', 'weekFilters', 'programMultipleFilters']);
 
 export const ProgramInfor = (appliedFilters) =>
-  postChart(payloads.ProgramInfor, appliedFilters, ['weekFilters']);
+  postChart(payloads.ProgramInfor, appliedFilters, ['weekFilters', 'programMultipleFilters']);
 
 export const AverageDropOffByMinute = (appliedFilters) =>
-  postChart(payloads.AverageDropOffByMinute, appliedFilters, ['weekFilters']);
+  postChart(payloads.AverageDropOffByMinute, appliedFilters, ['weekFilters', 'programMultipleFilters']);
 
 export const WatchTimeEfficiencyLast8Weeks = (appliedFilters) =>
-  postChart(payloads.WatchTimeEfficiencyLast8Weeks, appliedFilters, ['weekFilters', 'dateFilters']);
+  postChart(payloads.WatchTimeEfficiencyLast8Weeks, appliedFilters, ['weekFilters', 'dateFilters', 'programMultipleFilters']);
 
 export const DropOffCurve = (appliedFilters) =>
-  postChart(payloads.DropOffCurve, appliedFilters, ['weekFilters']);
+  postChart(payloads.DropOffCurve, appliedFilters, ['weekFilters', 'programMultipleFilters']);
 
 export const filterProgram = (appliedFilters) =>
-  postChart(payloads.filterProgram, appliedFilters, ['weekFilters', 'dateFilters', 'programFilters']);
+  postChart(payloads.filterProgram, appliedFilters, ['weekFilters', 'dateFilters', 'programFilters', 'programMultipleFilters']);
 
 export const ContentHealthScoreReport = (appliedFilters) =>
-  postChart(payloads.ContentHealthScoreReport, appliedFilters, ['weekFilters']);
+  postChart(payloads.ContentHealthScoreReport, appliedFilters, ['weekFilters', 'dateFilters', 'programFilters']);

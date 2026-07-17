@@ -163,6 +163,26 @@ function DashboardContent() {
 
   const [reportSearchQuery, setReportSearchQuery] = useState("");
   const [scorecardSearchQuery, setScorecardSearchQuery] = useState("");
+  const [programSearchQuery, setProgramSearchQuery] = useState("");
+
+  const filteredProgramsForSelect = useMemo(() => {
+    const data = dashboard?.FilterProgram?.data;
+    if (!data) return [];
+
+    const selected = appliedFilters?.programMultiples || [];
+    const selectedData = data.filter((p: any) => selected.includes(p.program_name));
+
+    if (!programSearchQuery) {
+      const defaultPrograms = ["THỜI SỰ 19H", "RẠNG RỠ VIỆT NAM", "THỂ THAO 24/7", "VIỆT NAM VUI KHỎE", "CHUYỂN ĐỘNG 24H"];
+      const defaultData = data.filter((p: any) => defaultPrograms.includes(p.program_name) && !selected.includes(p.program_name));
+      return [...selectedData, ...defaultData];
+    }
+
+    const q = programSearchQuery.toLowerCase();
+    const searchData = data.filter((p: any) => !selected.includes(p.program_name) && p.program_name?.toLowerCase().includes(q));
+
+    return [...selectedData, ...searchData];
+  }, [dashboard?.FilterProgram?.data, programSearchQuery, appliedFilters?.programMultiples]);
 
   const filteredScorecardData = useMemo(() => {
     const data = dashboard?.ProgramHealthScorecard?.data;
@@ -1002,7 +1022,53 @@ function DashboardContent() {
         TAB 1 — LINEUP OVERVIEW
 ══════════════════════════════ --> */}
         <div className="view" id="tab-report">
-
+          <div className="section" style={{ marginBottom: '14px' }}>
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="section-title">🔍 Chọn chương trình để xem chi tiết</div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm chương trình..."
+                value={programSearchQuery}
+                onChange={(e) => setProgramSearchQuery(e.target.value)}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
+              />
+            </div>
+            <div className="section-body">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '250px', overflowY: 'auto', padding: '12px', background: '#1c2130', borderRadius: '8px', border: '1px solid #333' }}>
+                {filteredProgramsForSelect.map((programItem: any) => {
+                  const isSelected = appliedFilters?.programMultiples?.includes(programItem.program_name);
+                  return (
+                    <div
+                      key={programItem.program_name}
+                      onClick={() => {
+                        let newPrograms = appliedFilters?.programMultiples || [];
+                        if (isSelected) {
+                          newPrograms = newPrograms.filter((p: string) => p !== programItem.program_name);
+                        } else {
+                          newPrograms = [...newPrograms, programItem.program_name];
+                        }
+                        setAppliedFilters({ ...appliedFilters, programMultiples: newPrograms });
+                      }}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        fontWeight: isSelected ? '600' : '400',
+                        background: isSelected ? '#3d8bff' : 'transparent',
+                        color: isSelected ? '#fff' : '#a0aabf',
+                        border: `1px solid ${isSelected ? '#3d8bff' : '#333'}`,
+                        transition: 'all 0.2s',
+                        userSelect: 'none'
+                      }}
+                    >
+                      {programItem.program_name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
           {/* <!-- Program Health Table --> */}
           <div className="section">
             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
