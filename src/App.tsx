@@ -161,6 +161,38 @@ function DashboardContent() {
   const selectedWeek = appliedFilters?.weeks?.[0] || (weekOptions[0] ? `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : '');
   const selectedDate = appliedFilters?.dates?.[0] || (dates[0]?.value || '');
 
+  const [reportSearchQuery, setReportSearchQuery] = useState("");
+  const [scorecardSearchQuery, setScorecardSearchQuery] = useState("");
+
+  const filteredScorecardData = useMemo(() => {
+    const data = dashboard?.ProgramHealthScorecard?.data;
+    if (!data) return [];
+    if (!scorecardSearchQuery) return data;
+    const q = scorecardSearchQuery.toLowerCase();
+    return data.filter((p: any) => {
+      return (
+        p.program_name?.toLowerCase().includes(q) ||
+        p.status?.toLowerCase().includes(q)
+      );
+    });
+  }, [dashboard?.ProgramHealthScorecard?.data, scorecardSearchQuery]);
+
+  const filteredReportData = useMemo(() => {
+    const data = dashboard?.ContentHealthScoreReport?.data;
+    if (!data) return [];
+    if (!reportSearchQuery) return data;
+    const q = reportSearchQuery.toLowerCase();
+    return data.filter((p: any) => {
+      return (
+        p.program_name?.toLowerCase().includes(q) ||
+        p.channel_name_tvd?.toLowerCase().includes(q) ||
+        p.typo_first?.toLowerCase().includes(q) ||
+        p.frequency?.toLowerCase().includes(q) ||
+        (p.date && new Date(p.date).toLocaleDateString("vi-VN").includes(q))
+      );
+    });
+  }, [dashboard?.ContentHealthScoreReport?.data, reportSearchQuery]);
+
   return (
     <>
       {/* <!-- NAV --> */}
@@ -180,17 +212,14 @@ function DashboardContent() {
               );
             })}
           </select>}
-          {tab !== 'lineup' && <select
+          {tab !== 'lineup' && <input
+            type="date"
             className="nav-select-2"
             value={selectedDate}
             onChange={(e) => onChange("dates", e.target.value)}
-          >
-            {dates.map((date) => (
-              <option key={date.value} value={date.value}>
-                {date.label}
-              </option>
-            ))}
-          </select>}
+            min={dates[dates.length - 1]?.value}
+            max={dates[0]?.value}
+          />}
           <div className="nav-channel-vtv1" style={{ opacity: appliedFilters?.channels === undefined || appliedFilters?.channels?.[0] === 'VTV1' ? 1 : 0.4 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV1'] }); }}>VTV1</div>
           <div className="nav-channel-vtv2" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV2' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV2'] }); }}>VTV2</div>
           <div className="nav-channel-vtv3" style={{ opacity: appliedFilters?.channels?.[0] !== 'VTV3' ? 0.4 : 1 }} onClick={() => { setAppliedFilters({ ...appliedFilters, channels: ['VTV3'] }); }}>VTV3</div>
@@ -269,9 +298,18 @@ function DashboardContent() {
 
           {/* <!-- Program Health Table --> */}
           <div className="section">
-            <div className="section-header">
-              <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 27'}</div>
-              <div className="section-sub">Click tên chương trình để xem chi tiết → Tab Chi tiết</div>
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 27'}</div>
+                {/* <div className="section-sub">Click tên chương trình để xem chi tiết → Tab Chi tiết</div> */}
+              </div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm chương trình, trạng thái..."
+                value={scorecardSearchQuery}
+                onChange={(e) => setScorecardSearchQuery(e.target.value)}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px', alignSelf: 'center' }}
+              />
             </div>
             <div className="section-body" style={{ padding: '0' }}>
               <table className="health-table">
@@ -291,7 +329,7 @@ function DashboardContent() {
                   :
                   <tbody>
                     {/* <!-- STRENGTHEN --> */}
-                    {dashboard?.ProgramHealthScorecard?.data?.map((program: any) => (
+                    {filteredScorecardData.map((program: any) => (
                       < tr onClick={() => { setAppliedFilters({ ...appliedFilters, programs: [program.program_name] }); setTab('program'); setSelectedProgramSlug(toSlug(program.program_name)); }} style={{ cursor: 'pointer' }}>
                         <td style={{ paddingLeft: '16px' }}>
                           <div className="prog-name">{program.program_name}</div>
@@ -967,8 +1005,15 @@ function DashboardContent() {
 
           {/* <!-- Program Health Table --> */}
           <div className="section">
-            <div className="section-header">
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="section-title">📊 Contel Health Report</div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm chương trình, kênh, thể loại..."
+                value={reportSearchQuery}
+                onChange={(e) => setReportSearchQuery(e.target.value)}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
+              />
             </div>
             <div className="section-body" style={{ padding: '0' }}>
               <table className="health-table">
@@ -992,7 +1037,7 @@ function DashboardContent() {
                   :
                   <tbody>
                     {/* <!-- STRENGTHEN --> */}
-                    {dashboard?.ContentHealthScoreReport?.data?.map((program: any) => (
+                    {filteredReportData.map((program: any, index: number) => (
                       <tr>
                         <td style={{ paddingLeft: '16px' }}>
                           <div>{new Date(program.date).toLocaleDateString("vi-VN")}</div>
@@ -1021,7 +1066,7 @@ function DashboardContent() {
                             <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) > 70 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) > 60 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) > 40 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) > 70 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) > 60 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) > 40 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
                           </div>
                         </td>
-                        
+
                         <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'text' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
                         </td>
                         <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'text' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
