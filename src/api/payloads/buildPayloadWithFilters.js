@@ -60,6 +60,14 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
       }),
     },
     {
+      key: 'channelMultiples',
+      disabledKey: 'channelMultipleFilters',
+      build: () => buildQueriesFilters({
+        column: 'channel_name_tvd',
+        values: filterState.channelMultiples
+      }),
+    },
+    {
       key: 'provinces',
       disabledKey: 'provinceFilters',
       build: () => buildQueriesFilters({
@@ -108,7 +116,7 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
       }),
     },
     {
-      key: 'programs',
+      key: 'programMultiples',
       disabledKey: 'programMultipleFilters',
       build: () => buildQueriesFilters({
         column: 'program_name',
@@ -203,10 +211,10 @@ const appendAllFilters = (queries, filterState, disabledFilters) => {
         !disabledFilters.includes(disabledKey) &&
         !disabledFilters.includes('allFilters')
       ) {
-        if (builtFilter[0].col === 'channel_name_tvd' && !disabledFilters.includes('channelFilters')) {
+        if (builtFilter[0].col === 'channel_name_tvd') {
           newFilters = newFilters.filter(f => f.col !== 'channel_name_tvd')
         }
-        if (builtFilter[0].col === 'program_name' && !disabledFilters.includes('programFilters')) {
+        if (builtFilter[0].col === 'program_name') {
           newFilters = newFilters.filter(f => f.col !== 'program_name')
         }
         newFilters = appendFilters(newFilters, builtFilter);
@@ -266,6 +274,9 @@ export const buildPayloadWithFilters = (basePayload, filterState, enabledFilters
   let endDate = undefined;
   if (!enabledFilters.includes('dateFilters')) {
     startDate = endDate = filterState?.dates?.[0];
+  } else if (!enabledFilters.includes('dateMultipleFilters')) {
+    startDate = filterState?.startDate?.[0];
+    endDate = filterState?.endDate?.[0];
   }
 
   const timeRange = toTimeRangeString(startDate, endDate);

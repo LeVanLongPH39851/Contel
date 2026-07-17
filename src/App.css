@@ -156,7 +156,29 @@ body::before {
 .nav-select-2 option {
   font-size: calc(12px + 2px);
   font-weight: 700;
-  background-color: rgba(0, 94, 190, 0.48);
+  background-color: #16243d;
+  color: #ffffff;
+}
+
+.nav-select-3 {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: calc(11px + 2px);
+  font-weight: 600;
+  letter-spacing: .03em;
+  background: #1c2130;
+  color: #fff;
+  border: 1px solid #333;
+  font-family: var(--display);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.nav-select-3 option {
+  font-size: calc(12px + 2px);
+  font-weight: 600;
+  background-color: #1c2130;
   color: #ffffff;
 }
 
@@ -1141,6 +1163,10 @@ select::-webkit-scrollbar-track {
 select::-webkit-scrollbar-thumb {
   background: var(--text);
   border-radius: 3px;
+}
+
+.nav-select-3::-webkit-scrollbar-track {
+  background: #1c2130;
 }
 
 ::-webkit-scrollbar-track {
