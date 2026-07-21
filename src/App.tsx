@@ -426,7 +426,7 @@ function DashboardContent() {
       <div className="header-strip">
         <div>
           <div className="header-title">Sức khỏe <span>Nội dung</span> {appliedFilters?.channels?.[0] || 'VTV1'}</div>
-          <div className="header-sub">{tab === 'lineup' ? appliedFilters?.weeks?.[0] || `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : tab === 'report' ? `Ngày ${appliedFilters?.startDate ? formatDateLast(appliedFilters?.startDate) : formatDateLast(getYesterday())} - ${appliedFilters?.endDate ? formatDateLast(appliedFilters?.endDate) : formatDateLast(getYesterday())}` : `Ngày ${formatDateLast(appliedFilters?.dates?.[0]) || formatDateLast(getYesterday())}`} · {dashboard?.ProgramHealthScorecard?.data?.length || 0} chương trình đang theo dõi</div>
+          <div className="header-sub">{tab === 'lineup' ? appliedFilters?.weeks?.[0] || `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : tab === 'report' ? `Ngày ${appliedFilters?.startDate ? formatDateLast(appliedFilters?.startDate) : formatDateLast(getYesterday())} - ${appliedFilters?.endDate ? formatDateLast(appliedFilters?.endDate) : formatDateLast(getYesterday())}` : `Ngày ${appliedFilters?.dates?.[0] ? formatDateLast(appliedFilters?.dates?.[0]) : formatDateLast(getYesterday())}`} · {dashboard?.ProgramHealthScorecard?.data?.length || 0} chương trình đang theo dõi</div>
         </div>
         <div className="header-divider"></div>
         <div className="header-meta"><strong>Kênh</strong>{appliedFilters?.channels?.[0] || 'VTV1'}</div>
