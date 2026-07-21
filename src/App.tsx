@@ -502,9 +502,9 @@ function DashboardContent() {
                 style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px', alignSelf: 'center' }}
               />
             </div>
-            <div className="section-body" style={{ padding: '0' }}>
-              <table className="health-table">
-                <thead>
+            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh' }}>
+              <table className="health-table" style={{ position: 'relative' }}>
+                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--ink-2)', zIndex: 99999999 }} >
                   <tr>
                     {([
                       { label: 'Chương trình', key: 'program_name', style: { paddingLeft: '16px' } },
@@ -784,9 +784,9 @@ function DashboardContent() {
                 style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
               />
             </div>
-            <div className="section-body" style={{ padding: '0' }} ref={reportFilterRef}>
-              <table className="health-table">
-                <thead>
+            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh' }} ref={reportFilterRef}>
+              <table className="health-table" style={{ position: 'relative' }}>
+                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--ink-2)', zIndex: 99999999 }}>
                   <tr>
                     {([
                       { label: 'Ngày', key: 'date', style: { paddingLeft: '16px' } },
