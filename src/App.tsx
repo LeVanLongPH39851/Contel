@@ -440,8 +440,8 @@ function DashboardContent() {
       {/* <!-- TABS --> */}
       <div className="tab-bar">
         <div className="tab active" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Tổng quan chương trình</div>
-        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Contel Health Report</div>
-        <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Quan hệ phụ thuộc trong lịch phát sóng</div>
+        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Tổng quan theo kênh</div>
+        <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Khung chương trình trong ngày</div>
         {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
         <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
       </div>
