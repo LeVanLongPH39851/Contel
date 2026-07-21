@@ -456,6 +456,10 @@ body::before {
   color: var(--text);
 }
 
+.sum-val.blue {
+  color: var(--blue);
+}
+
 .sum-delta {
   font-size: calc(10px + 2px);
   margin-top: 4px;
@@ -669,6 +673,10 @@ body::before {
 
 .metric-num.red {
   color: var(--red);
+}
+
+.metric-num.blue {
+  color: var(--blue);
 }
 
 .metric-num.text {
@@ -1124,6 +1132,10 @@ body::before {
 
 .mk-val.red {
   color: var(--red);
+}
+
+.mk-val.blue {
+  color: var(--blue);
 }
 
 .mk-sub {

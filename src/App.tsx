@@ -462,13 +462,13 @@ function DashboardContent() {
               {/* <div className="sum-sub">Mức MAINTAIN — theo dõi sát</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
+              <div className="sum-label" title='Số lượng chương trình điểm cao'>Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
               <div className="sum-val green">{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHEN}</div>
               <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : programSTRENGTHENDelta < 0 ? 'down' : 'flat'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} so với tuần trước</div>
               {/* <div className="sum-sub">25% tổng lineup</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
+              <div className="sum-label" title='Số lượng chương trình điểm thấp'>Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
               <div className="sum-val red">{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISK}</div>
               <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : programATRISKDelta < 0 ? 'up' : 'flat'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} so với tuần trước</div>
               {/* <div className="sum-sub">Cần quyết định trong 2 tuần</div> */}
@@ -565,13 +565,13 @@ function DashboardContent() {
                         </td>
                         <td><div className="sparkline" id={`${program.program_name}`}></div></td>
                         <td><span className={`badge ${program.status.toLowerCase().replace(' ', '-')}`}>{program.status}</span></td>
-                        <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'text' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'blue' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">↑ +1.4pp</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 70 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 60 ? 'text' : program['Return Viewer Rate']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 70 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 60 ? 'blue' : program['Return Viewer Rate']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">Loyal base cao</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 60 ? 'text' : program['Lead-in Effect']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 60 ? 'blue' : program['Lead-in Effect']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">→ Phim VTV1 20h</div> */}
                         </td>
                         {/* <td style={{ fontSize: '10px', color: 'var(--green)' }}>Đề xuất nâng tier giá slot QC</td> */}
@@ -960,11 +960,11 @@ function DashboardContent() {
                           </div>
                         </td>
 
-                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'text' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'blue' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
                         </td>
-                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'text' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'blue' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'text' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'blue' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
                         </td>
                         <td><div className={`metric-num text`}>{(Number(program['Drop-off theo phút']) * 100).toFixed(2)}%</div>
                         </td>
@@ -1010,7 +1010,7 @@ function DashboardContent() {
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.PrimeTimeChain19h0022h30.data.length - 1 &&
@@ -1092,7 +1092,7 @@ function DashboardContent() {
                           {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'text' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.MorningBlock06h3009h00.data.length - 1 &&
@@ -1517,7 +1517,7 @@ function DashboardContent() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: "100%" }}>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Return Viewer Rate</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 60 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
                       <div className="mk-sub" id="kpi-rvr-sub">↑ +2.3pp vs tuần trước</div>
                     </div>
                     <div className="mini-kpi">
@@ -1527,12 +1527,12 @@ function DashboardContent() {
                     </div>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả mới không xem tập trước đó của chương trình (100 - RVR)'>New Viewer Rate</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 70 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 60 ? 'text' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 40 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 70 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 60 ? 'blue' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 40 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
                       <div className="mk-sub" id="kpi-new-sub">Vẫn thu hút người mới</div>
                     </div>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 60 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
                       <div className="mk-sub" id="kpi-leadin-sub">Anchor chain prime time</div>
                     </div>
                   </div>
