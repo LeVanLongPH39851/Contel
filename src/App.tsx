@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import { useDashboardData } from './hooks/useDashboardData';
 import { switchTab, loadProgram, selectProgram, init, drawSparkline } from "./utils/App";
 import { DashboardFilterProvider } from './context/DashboardFilterContext';
 import { useDashboardFilters } from './context/DashboardFilterContext';
-import { toSlug, getISOWeek, formatDate } from './helpers/helper';
+import { toSlug, getISOWeek, formatDate, formatDateLast, getYesterday } from './helpers/helper';
 
 function DashboardContent() {
   const dashboard = useDashboardData();
@@ -49,6 +49,42 @@ function DashboardContent() {
   const [reportSearchQuery, setReportSearchQuery] = useState("");
   const [scorecardSearchQuery, setScorecardSearchQuery] = useState("");
   const [programSearchQuery, setProgramSearchQuery] = useState("");
+  const [reportSortConfig, setReportSortConfig] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(null);
+  const [scorecardSortConfig, setScorecardSortConfig] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(null);
+  const [dropOffTooltip, setDropOffTooltip] = useState<{ x: number; y: number; minute: number; pct: number } | null>(null);
+  const [reportColFilters, setReportColFilters] = useState<Record<string, string[]>>({});
+  const [reportFilterOpen, setReportFilterOpen] = useState<string | null>(null);
+  const reportFilterRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (reportFilterRef.current && !reportFilterRef.current.contains(e.target as Node)) {
+        setReportFilterOpen(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleReportSort = (key: string) => {
+    setReportSortConfig(prev => {
+      if (prev?.key === key) {
+        if (prev.dir === 'asc') return { key, dir: 'desc' };
+        return null;
+      }
+      return { key, dir: 'asc' };
+    });
+  };
+
+  const handleScorecardSort = (key: string) => {
+    setScorecardSortConfig(prev => {
+      if (prev?.key === key) {
+        if (prev.dir === 'asc') return { key, dir: 'desc' };
+        return null;
+      }
+      return { key, dir: 'asc' };
+    });
+  };
 
   useEffect(() => {
     if (!dashboard.isLoading.ProgramHealthScorecard) {
@@ -187,31 +223,100 @@ function DashboardContent() {
   const filteredScorecardData = useMemo(() => {
     const data = dashboard?.ProgramHealthScorecard?.data;
     if (!data) return [];
-    if (!scorecardSearchQuery) return data;
-    const q = scorecardSearchQuery.toLowerCase();
-    return data.filter((p: any) => {
-      return (
+
+    let result = data;
+    if (scorecardSearchQuery) {
+      const q = scorecardSearchQuery.toLowerCase();
+      result = result.filter((p: any) => (
         p.program_name?.toLowerCase().includes(q) ||
         p.status?.toLowerCase().includes(q)
-      );
-    });
-  }, [dashboard?.ProgramHealthScorecard?.data, scorecardSearchQuery]);
+      ));
+    }
+
+    if (scorecardSortConfig) {
+      const { key, dir } = scorecardSortConfig;
+      result = [...result].sort((a: any, b: any) => {
+        const aVal = a[key] ?? 0;
+        const bVal = b[key] ?? 0;
+        if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [dashboard?.ProgramHealthScorecard?.data, scorecardSearchQuery, scorecardSortConfig]);
+
+  const REPORT_FILTERABLE_KEYS = ['typo_first', 'frequency', 'duration', 'channel_name_tvd'];
+
+  const reportUniqueValues = useMemo(() => {
+    const data = dashboard?.ContentHealthScoreReport?.data;
+    if (!data) return {} as Record<string, string[]>;
+    const map: Record<string, Set<string>> = {};
+    for (const key of REPORT_FILTERABLE_KEYS) {
+      map[key] = new Set();
+    }
+    for (const row of data) {
+      for (const key of REPORT_FILTERABLE_KEYS) {
+        const v = row[key];
+        if (v != null && v !== '') map[key].add(String(v));
+      }
+    }
+    const result: Record<string, string[]> = {};
+    for (const key of REPORT_FILTERABLE_KEYS) {
+      result[key] = Array.from(map[key]).sort();
+    }
+    return result;
+  }, [dashboard?.ContentHealthScoreReport?.data]);
 
   const filteredReportData = useMemo(() => {
     const data = dashboard?.ContentHealthScoreReport?.data;
     if (!data) return [];
-    if (!reportSearchQuery) return data;
-    const q = reportSearchQuery.toLowerCase();
-    return data.filter((p: any) => {
-      return (
+
+    let result = data;
+    if (reportSearchQuery) {
+      const q = reportSearchQuery.toLowerCase();
+      result = result.filter((p: any) => (
         p.program_name?.toLowerCase().includes(q) ||
         p.channel_name_tvd?.toLowerCase().includes(q) ||
         p.typo_first?.toLowerCase().includes(q) ||
         p.frequency?.toLowerCase().includes(q) ||
         (p.date && new Date(p.date).toLocaleDateString("vi-VN").includes(q))
-      );
-    });
-  }, [dashboard?.ContentHealthScoreReport?.data, reportSearchQuery]);
+      ));
+    }
+
+    // column filters
+    for (const [key, selected] of Object.entries(reportColFilters)) {
+      if (selected.length > 0) {
+        result = result.filter((p: any) => selected.includes(String(p[key] ?? '')));
+      }
+    }
+
+    if (reportSortConfig) {
+      const { key, dir } = reportSortConfig;
+      result = [...result].sort((a: any, b: any) => {
+        let aVal: any;
+        let bVal: any;
+        if (key === 'date') {
+          aVal = new Date(a.date).getTime();
+          bVal = new Date(b.date).getTime();
+        } else if (key === 'time') {
+          const ta = new Date(a.event_start_timestamp);
+          const tb = new Date(b.event_start_timestamp);
+          aVal = ta.getHours() * 60 + ta.getMinutes();
+          bVal = tb.getHours() * 60 + tb.getMinutes();
+        } else {
+          aVal = a[key] ?? 0;
+          bVal = b[key] ?? 0;
+        }
+        if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [dashboard?.ContentHealthScoreReport?.data, reportSearchQuery, reportSortConfig, reportColFilters]);
 
   return (
     <>
@@ -321,7 +426,7 @@ function DashboardContent() {
       <div className="header-strip">
         <div>
           <div className="header-title">Sức khỏe <span>Nội dung</span> {appliedFilters?.channels?.[0] || 'VTV1'}</div>
-          <div className="header-sub">{appliedFilters?.weeks?.[0] || `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})`} · {dashboard?.ProgramHealthScorecard?.data?.length || 0} chương trình đang theo dõi</div>
+          <div className="header-sub">{tab === 'lineup' ? appliedFilters?.weeks?.[0] || `Tuần ${weekOptions[0].week} (${weekOptions[0].start} - ${weekOptions[0].end})` : tab === 'report' ? `Ngày ${appliedFilters?.startDate ? formatDateLast(appliedFilters?.startDate) : formatDateLast(getYesterday())} - ${appliedFilters?.endDate ? formatDateLast(appliedFilters?.endDate) : formatDateLast(getYesterday())}` : `Ngày ${formatDateLast(appliedFilters?.dates?.[0]) || formatDateLast(getYesterday())}`} · {dashboard?.ProgramHealthScorecard?.data?.length || 0} chương trình đang theo dõi</div>
         </div>
         <div className="header-divider"></div>
         <div className="header-meta"><strong>Kênh</strong>{appliedFilters?.channels?.[0] || 'VTV1'}</div>
@@ -335,10 +440,10 @@ function DashboardContent() {
       {/* <!-- TABS --> */}
       <div className="tab-bar">
         <div className="tab active" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Tổng quan chương trình</div>
+        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Contel Health Report</div>
         <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Quan hệ phụ thuộc trong lịch phát sóng</div>
         {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
         <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
-        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Contel Health Report</div>
       </div>
 
       <div className="main">
@@ -353,31 +458,31 @@ function DashboardContent() {
             <div className="sum-card">
               <div className="sum-label">Avg Health Score · Kênh</div>
               <div className="sum-val amber">{dashboard.isLoading.AvgHealthScore ? 'Loading...' : AvgHealthScore}</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgHealthScore ? 'down' : Number(AvgHealthScoreDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgHealthScore ? 'Loading...' : Number(AvgHealthScoreDelta) > 0 ? '↑ +' + AvgHealthScoreDelta : '↓ ' + AvgHealthScoreDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgHealthScore ? 'down' : Number(AvgHealthScoreDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgHealthScore ? 'Loading...' : Number(AvgHealthScoreDelta) > 0 ? '↑ +' + AvgHealthScoreDelta : '↓ ' + AvgHealthScoreDelta} so với tuần trước</div>
               {/* <div className="sum-sub">Mức MAINTAIN — theo dõi sát</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#00e5a0', fontWeight: 700 }}>STRENGTHEN</span></div>
               <div className="sum-val green">{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHEN}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : programSTRENGTHENDelta < 0 ? 'down' : 'flat'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programSTRENGTHEN ? 'down' : programSTRENGTHENDelta > 0 ? 'up' : programSTRENGTHENDelta < 0 ? 'down' : 'flat'}`}>{dashboard.isLoading.programSTRENGTHEN ? 'Loading...' : programSTRENGTHENDelta > 0 ? '↑ +' + programSTRENGTHENDelta : '↓ ' + programSTRENGTHENDelta} so với tuần trước</div>
               {/* <div className="sum-sub">25% tổng lineup</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label">Chương trình <span style={{ color: '#ff3d5a', fontWeight: 700 }}>AT RISK</span></div>
               <div className="sum-val red">{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISK}</div>
-              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : programATRISKDelta < 0 ? 'up' : 'flat'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} vs tuần trước</div>
+              <div className={`sum-delta ${dashboard.isLoading.programATRISK ? 'down' : programATRISKDelta > 0 ? 'down' : programATRISKDelta < 0 ? 'up' : 'flat'}`}>{dashboard.isLoading.programATRISK ? 'Loading...' : programATRISKDelta > 0 ? '↑ +' + programATRISKDelta : '↓ ' + programATRISKDelta} so với tuần trước</div>
               {/* <div className="sum-sub">Cần quyết định trong 2 tuần</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Avg Watch Time Efficiency</div>
+              <div className="sum-label" title='Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa'>Avg Watch Time Efficiency</div>
               <div className="sum-val text">{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : AvgRetentionRate}%</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgRetentionRate ? 'down' : Number(AvgRetentionRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : Number(AvgRetentionRateDelta) > 0 ? '↑ +' + AvgRetentionRateDelta : '↓ ' + AvgRetentionRateDelta}pp</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgRetentionRate ? 'down' : Number(AvgRetentionRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : Number(AvgRetentionRateDelta) > 0 ? '↑ +' + AvgRetentionRateDelta : '↓ ' + AvgRetentionRateDelta}% so với tuần trước</div>
               {/* <div className="sum-sub">Cuối chương trình · avg VTV1</div> */}
             </div>
             <div className="sum-card">
-              <div className="sum-label">Avg Return Viewer Rate</div>
+              <div className="sum-label" title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Avg Return Viewer Rate</div>
               <div className="sum-val green">{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : AvgReturnViewerRate}%</div>
-              <div className={`sum-delta ${dashboard.isLoading.AvgReturnViewerRate ? 'down' : Number(AvgReturnViewerRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : Number(AvgReturnViewerRateDelta) > 0 ? '↑ +' + AvgReturnViewerRateDelta : '↓ ' + AvgReturnViewerRateDelta}pp</div>
+              <div className={`sum-delta ${dashboard.isLoading.AvgReturnViewerRate ? 'down' : Number(AvgReturnViewerRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : Number(AvgReturnViewerRateDelta) > 0 ? '↑ +' + AvgReturnViewerRateDelta : '↓ ' + AvgReturnViewerRateDelta}% so với tuần trước</div>
               {/* <div className="sum-sub">Device đã xem tuần trước quay lại</div> */}
             </div>
           </div>
@@ -401,14 +506,45 @@ function DashboardContent() {
               <table className="health-table">
                 <thead>
                   <tr>
-                    <th style={{ paddingLeft: '16px' }}>Chương trình</th>
-                    <th>Health Score</th>
-                    <th>Trend 4 tuần</th>
-                    <th>Trạng thái</th>
-                    <th>Watch Time Efficiency</th>
-                    <th>Return Viewer</th>
-                    <th>Lead-in Effect</th>
-                    {/* <th>Hành động đề xuất</th> */}
+                    {([
+                      { label: 'Chương trình', key: 'program_name', style: { paddingLeft: '16px' } },
+                      { label: 'Health Score', key: 'Content Health Score' },
+                      { label: 'Trend 4 tuần', key: null },
+                      { label: 'Trạng thái', key: 'status' },
+                      { label: 'Watch Time Efficiency', key: 'Watch Time Efficiency', title: 'Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa' },
+                      { label: 'Return Viewer', key: 'Return Viewer Rate', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
+                      { label: 'Lead-in Effect', key: 'Lead-in Effect', title: 'Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó' },
+                    ] as { label: string; key: string | null; style?: React.CSSProperties; title?: string }[]).map(({ label, key, style, title }) => {
+                      const isActive = key !== null && scorecardSortConfig?.key === key;
+                      const dir = isActive ? scorecardSortConfig!.dir : null;
+                      return (
+                        <th
+                          key={label}
+                          style={{
+                            ...style,
+                            cursor: key !== null ? 'pointer' : 'default',
+                            userSelect: 'none',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onClick={() => key !== null && handleScorecardSort(key)}
+                        >
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }} title={title}>
+                            {label}
+                            {key !== null && (
+                              <span style={{
+                                fontSize: '10px',
+                                opacity: isActive ? 1 : 0.3,
+                                color: isActive ? '#3d8bff' : 'inherit',
+                                transition: 'opacity 0.2s, color 0.2s',
+                                lineHeight: 1,
+                              }}>
+                                {dir === 'asc' ? '▲' : dir === 'desc' ? '▼' : '⇅'}
+                              </span>
+                            )}
+                          </span>
+                        </th>
+                      );
+                    })}
                   </tr>
                 </thead>
                 {dashboard.isLoading.ProgramHealthScorecard ? <tr><td colSpan={8} style={{ padding: '16px', textAlign: 'center' }}>Loading...</td></tr>
@@ -577,6 +713,263 @@ function DashboardContent() {
                       <td><div className="sparkline" id="sp-9"></div></td>
                       <td style={{ fontSize: '10px', color: 'var(--red)' }}>🔴 Xem xét thay thế nội dung</td>
                     </tr> */}
+                  </tbody>}
+              </table>
+            </div>
+          </div>
+
+        </div>
+        {/* <!-- /tab-lineup --> */}
+
+        {/* <!-- ══════════════════════════════
+        TAB 1 — LINEUP OVERVIEW
+══════════════════════════════ --> */}
+        <div className="view" id="tab-report">
+          <div className="section" style={{ marginBottom: '14px' }}>
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="section-title">🔍 Chọn chương trình để xem chi tiết</div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm chương trình..."
+                value={programSearchQuery}
+                onChange={(e) => setProgramSearchQuery(e.target.value)}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
+              />
+            </div>
+            <div className="section-body">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '250px', overflowY: 'auto', padding: '12px', background: '#1c2130', borderRadius: '8px', border: '1px solid #333' }}>
+                {filteredProgramsForSelect.map((programItem: any) => {
+                  const isSelected = appliedFilters?.programMultiples?.includes(programItem.program_name);
+                  return (
+                    <div
+                      key={programItem.program_name}
+                      onClick={() => {
+                        let newPrograms = appliedFilters?.programMultiples || [];
+                        if (isSelected) {
+                          newPrograms = newPrograms.filter((p: string) => p !== programItem.program_name);
+                        } else {
+                          newPrograms = [...newPrograms, programItem.program_name];
+                        }
+                        setAppliedFilters({ ...appliedFilters, programMultiples: newPrograms });
+                      }}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        fontWeight: isSelected ? '600' : '400',
+                        background: isSelected ? '#3d8bff' : 'transparent',
+                        color: isSelected ? '#fff' : '#a0aabf',
+                        border: `1px solid ${isSelected ? '#3d8bff' : '#333'}`,
+                        transition: 'all 0.2s',
+                        userSelect: 'none'
+                      }}
+                    >
+                      {programItem.program_name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          {/* <!-- Program Health Table --> */}
+          <div className="section">
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="section-title">📊 Contel Health Report</div>
+              <input
+                type="text"
+                placeholder="Tìm kiếm chương trình, kênh, thể loại..."
+                value={reportSearchQuery}
+                onChange={(e) => setReportSearchQuery(e.target.value)}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
+              />
+            </div>
+            <div className="section-body" style={{ padding: '0' }} ref={reportFilterRef}>
+              <table className="health-table">
+                <thead>
+                  <tr>
+                    {([
+                      { label: 'Ngày', key: 'date', style: { paddingLeft: '16px' } },
+                      { label: 'Thời gian', key: 'time' },
+                      { label: 'Kênh', key: 'channel_name_tvd', filterable: true },
+                      { label: 'Chương trình', key: 'program_name' },
+                      { label: 'Thể loại', key: 'typo_first', filterable: true },
+                      { label: 'Tần suất chiếu', key: 'frequency', filterable: true },
+                      { label: 'Thời lượng', key: 'duration', filterable: true },
+                      { label: 'Health Score', key: 'Content Health Score' },
+                      { label: 'WTE', key: 'WTE', title: 'Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa' },
+                      { label: 'RTR', key: 'RTR', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
+                      { label: 'Lead-in', key: 'Lead-in', title: 'Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó' },
+                      { label: 'Drop-off', key: 'Drop-off theo phút', title: 'Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình' },
+                    ] as { label: string; key: string; style?: React.CSSProperties; title?: string; filterable?: boolean }[]).map(({ label, key, style, title, filterable }) => {
+                      const isActive = reportSortConfig?.key === key;
+                      const dir = isActive ? reportSortConfig!.dir : null;
+                      const hasFilter = filterable && (reportColFilters[key]?.length ?? 0) > 0;
+                      const isFilterOpen = reportFilterOpen === key;
+                      const uniqueVals = reportUniqueValues[key] ?? [];
+                      const selectedVals = reportColFilters[key] ?? [];
+
+                      const toggleVal = (val: string) => {
+                        setReportColFilters(prev => {
+                          const cur = prev[key] ?? [];
+                          const next = cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val];
+                          return { ...prev, [key]: next };
+                        });
+                      };
+
+                      return (
+                        <th
+                          key={key}
+                          style={{
+                            ...style,
+                            userSelect: 'none',
+                            whiteSpace: 'nowrap',
+                            position: 'relative',
+                          }}
+                        >
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <span
+                              style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                              title={title}
+                              onClick={() => handleReportSort(key)}
+                            >
+                              {label}
+                              <span style={{
+                                fontSize: '10px',
+                                opacity: isActive ? 1 : 0.3,
+                                color: isActive ? '#3d8bff' : 'inherit',
+                                transition: 'opacity 0.2s, color 0.2s',
+                                lineHeight: 1,
+                              }}>
+                                {dir === 'asc' ? '▲' : dir === 'desc' ? '▼' : '⇅'}
+                              </span>
+                            </span>
+
+                            {filterable && (
+                              <span
+                                title="Lọc theo giá trị"
+                                onClick={(e) => { e.stopPropagation(); setReportFilterOpen(isFilterOpen ? null : key); }}
+                                style={{
+                                  cursor: 'pointer',
+                                  fontSize: '11px',
+                                  color: hasFilter ? '#f5a623' : '#556',
+                                  background: hasFilter ? 'rgba(245,166,35,0.12)' : 'transparent',
+                                  borderRadius: '3px',
+                                  padding: '1px 3px',
+                                  border: hasFilter ? '1px solid rgba(245,166,35,0.3)' : '1px solid transparent',
+                                  transition: 'all 0.15s',
+                                  lineHeight: 1,
+                                  marginLeft: '2px',
+                                }}
+                              >☰</span>
+                            )}
+                          </span>
+
+                          {/* dropdown */}
+                          {filterable && isFilterOpen && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                zIndex: 9999,
+                                background: '#161b27',
+                                border: '1px solid #2a3045',
+                                borderRadius: '8px',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                                minWidth: '180px',
+                                maxHeight: '260px',
+                                overflowY: 'auto',
+                                padding: '6px 0',
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {/* clear btn */}
+                              <div style={{ padding: '4px 12px 6px', borderBottom: '1px solid #2a3045', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '11px', color: '#6a7390' }}>{selectedVals.length ? `${selectedVals.length} đã chọn` : 'Tất cả'}</span>
+                                {selectedVals.length > 0 && (
+                                  <span
+                                    onClick={() => setReportColFilters(prev => ({ ...prev, [key]: [] }))}
+                                    style={{ fontSize: '11px', color: '#f5a623', cursor: 'pointer', textDecoration: 'underline' }}
+                                  >Xóa</span>
+                                )}
+                              </div>
+                              {uniqueVals.map(val => {
+                                const checked = selectedVals.includes(val);
+                                return (
+                                  <label
+                                    key={val}
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: '8px',
+                                      padding: '5px 12px', cursor: 'pointer',
+                                      background: checked ? 'rgba(61,139,255,0.08)' : 'transparent',
+                                      transition: 'background 0.15s',
+                                      fontSize: '12px', color: checked ? '#3d8bff' : '#b0bac8',
+                                    }}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = checked ? 'rgba(61,139,255,0.14)' : 'rgba(255,255,255,0.04)'; }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = checked ? 'rgba(61,139,255,0.08)' : 'transparent'; }}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={checked}
+                                      onChange={() => toggleVal(val)}
+                                      style={{ accentColor: '#3d8bff', width: '13px', height: '13px', cursor: 'pointer' }}
+                                    />
+                                    {val}
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                {dashboard.isLoading.ContentHealthScoreReport ? <tr><td colSpan={12} style={{ padding: '16px', textAlign: 'center' }}>Loading...</td></tr>
+                  :
+                  <tbody>
+                    {/* <!-- STRENGTHEN --> */}
+                    {filteredReportData.map((program: any, index: number) => (
+                      <tr>
+                        <td style={{ paddingLeft: '16px' }}>
+                          <div>{new Date(program.date).toLocaleDateString("vi-VN")}</div>
+                        </td>
+                        <td>
+                          <div>{new Date(program.event_start_timestamp).toLocaleTimeString("vi-VN")}</div>
+                        </td>
+                        <td>
+                          <div style={{ fontSize: 15, fontWeight: '700', color: program.channel_name_tvd === 'VTV1' ? 'var(--amber)' : program.channel_name_tvd === 'VTV2' ? 'var(--green)' : program.channel_name_tvd === 'VTV3' ? 'var(--blue)' : program.channel_name_tvd === 'VTV4' ? 'var(--cyan)' : program.channel_name_tvd === 'VTV5' ? 'var(--purple)' : program.channel_name_tvd === 'VTV6' ? 'var(--pink)' : 'var(--red)' }}>{program.channel_name_tvd}</div>
+                        </td>
+                        <td>
+                          <div className='prog-name'>{program.program_name}</div>
+                        </td>
+                        <td>
+                          <div>{program.typo_first}</div>
+                        </td>
+                        <td>
+                          <div>{program.frequency}</div>
+                        </td>
+                        <td>
+                          <div>{program.duration}</div>
+                        </td>
+
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) > 70 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) > 60 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) > 40 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) > 70 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) > 60 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) > 40 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
+                          </div>
+                        </td>
+
+                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'text' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'text' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'text' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
+                        </td>
+                        <td><div className={`metric-num text`}>{(Number(program['Drop-off theo phút']) * 100).toFixed(2)}%</div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>}
               </table>
             </div>
@@ -789,7 +1182,7 @@ function DashboardContent() {
                   {/* <div className="mk-sub">Bleed 88% — mất gần hết audience sau chương trình</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label">Lead-in TB toàn kênh</div>
+                  <div className="mk-label" title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in TB toàn kênh</div>
                   <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 70 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0)}%</div>
                   {/* <div className="mk-sub">↑ +3pp vs tuần trước</div> */}
                 </div>
@@ -799,7 +1192,7 @@ function DashboardContent() {
                   {/* <div className="mk-sub">Bleed chỉ 7% — anchor mạnh nhất</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label">Rủi ro Dây chuyền</div>
+                  <div className="mk-label" title='Số chương trình At risk'>Rủi ro Dây chuyền</div>
                   <div className={`mk-val red`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]} điểm</div>
                   {/* <div className="mk-sub">Prime time 22h & Trưa 12h</div> */}
                 </div>
@@ -938,17 +1331,17 @@ function DashboardContent() {
                 <div style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '4px' }} id="prog-slot">20:00 – 21:00 · T2–T6</div>
                 <div className="hs-components">
                   <div className="hs-comp">
-                    <div className="hs-comp-label">WTE</div>
+                    <div className="hs-comp-label" title='Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa'>WTE</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-ret" style={{ width: '77%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-ret">77%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Return-Viewer</div>
+                    <div className="hs-comp-label" title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Return-Viewer</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-rv" style={{ width: '69%', background: 'var(--green)' }}></div></div>
                     <div className="hs-comp-val" id="val-rv">69%</div>
                   </div>
                   <div className="hs-comp">
-                    <div className="hs-comp-label">Lead-in</div>
+                    <div className="hs-comp-label" title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó '>Lead-in</div>
                     <div className="hs-comp-bar-wrap"><div className="hs-comp-bar" id="bar-li" style={{ width: '74%', background: 'var(--cyan)' }}></div></div>
                     <div className="hs-comp-val" id="val-li">74%</div>
                   </div>
@@ -960,7 +1353,7 @@ function DashboardContent() {
 
               {/* <!-- Retention Curve --> */}
               <div className="chart-wrap">
-                <div className="chart-title" id="curve-title">Drop-off Curve · Rạng Đông · Tập mới nhất · 60 phút</div>
+                <div className="chart-title" id="curve-title" title='Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình'>Drop-off Curve · Rạng Đông · Tập mới nhất · 60 phút</div>
                 <svg width="100%" height="180" viewBox="0 0 700 180" preserveAspectRatio="none" id="retention-curve">
                   <defs>
                     <linearGradient id="rg1" x1="0" y1="0" x2="0" y2="1">
@@ -1009,11 +1402,79 @@ function DashboardContent() {
                         return <text key={i} x={x} y="175" fill="#979cb8" fontSize="8" fontFamily="monospace">{formatTime(minuteValue)}</text>;
                       });
 
+                      const handleMouseMove = (e: React.MouseEvent<SVGRectElement>) => {
+                        const rect = e.currentTarget.closest('svg')!.getBoundingClientRect();
+                        const rawX = ((e.clientX - rect.left) / rect.width) * 700;
+                        const clampedX = Math.max(0, Math.min(700, rawX));
+                        const minute = (clampedX / 700) * maxMin;
+
+                        // find nearest data point
+                        let nearest = data[0];
+                        let minDist = Infinity;
+                        for (const d of data) {
+                          const dist = Math.abs(d.minute_index - minute);
+                          if (dist < minDist) { minDist = dist; nearest = d; }
+                        }
+                        const px = (nearest.minute_index / maxMin) * 700;
+                        const py = 180 - (nearest['AVG(dropoff_rate_by_view)'] * 180);
+                        setDropOffTooltip({
+                          x: px,
+                          y: py,
+                          minute: nearest.minute_index,
+                          pct: nearest['AVG(dropoff_rate_by_view)'] * 100,
+                        });
+                      };
+
+                      const tooltipX = dropOffTooltip ? Math.min(dropOffTooltip.x, 640) : 0;
+                      const tooltipAnchor = dropOffTooltip && dropOffTooltip.x > 560 ? 'end' : 'start';
+                      const tooltipLabelX = dropOffTooltip
+                        ? (tooltipAnchor === 'end' ? tooltipX - 6 : tooltipX + 6)
+                        : 0;
+
                       return (
                         <>
                           <path d={dArea} fill="url(#rg1)" />
                           <path d={dLine} fill="none" stroke="#00e5a0" strokeWidth="2" />
                           {labels}
+
+                          {/* hover overlay */}
+                          <rect
+                            x="0" y="0" width="700" height="180"
+                            fill="transparent"
+                            style={{ cursor: 'crosshair' }}
+                            onMouseMove={handleMouseMove}
+                            onMouseLeave={() => setDropOffTooltip(null)}
+                          />
+
+                          {/* crosshair + dot + tooltip */}
+                          {dropOffTooltip && (
+                            <>
+                              <line
+                                x1={dropOffTooltip.x} y1="0"
+                                x2={dropOffTooltip.x} y2="180"
+                                stroke="#fff" strokeWidth="1" strokeDasharray="3,3" opacity="0.3"
+                              />
+                              <circle
+                                cx={dropOffTooltip.x} cy={dropOffTooltip.y}
+                                r="4" fill="#00e5a0" stroke="#0d1117" strokeWidth="2"
+                              />
+                              {/* tooltip background */}
+                              <rect
+                                x={tooltipAnchor === 'end' ? tooltipX - 92 : tooltipX + 6}
+                                y={Math.max(4, dropOffTooltip.y - 26)}
+                                width="86" height="22"
+                                rx="4" fill="#0d1117" opacity="0.88"
+                              />
+                              <text
+                                x={tooltipLabelX}
+                                y={Math.max(18, dropOffTooltip.y - 8)}
+                                fill="#00e5a0" fontSize="10" fontFamily="monospace"
+                                textAnchor={tooltipAnchor}
+                              >
+                                {`${formatTime(dropOffTooltip.minute)}  ${dropOffTooltip.pct.toFixed(1)}%`}
+                              </text>
+                            </>
+                          )}
                         </>
                       );
                     })()
@@ -1055,22 +1516,22 @@ function DashboardContent() {
                 <div className="section-body" style={{ flex: 1 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: "100%" }}>
                     <div className="mini-kpi">
-                      <div className="mk-label" style={{ marginBottom: 10 }}>Return Viewer Rate</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Return Viewer Rate</div>
                       <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
                       <div className="mk-sub" id="kpi-rvr-sub">↑ +2.3pp vs tuần trước</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label" style={{ marginBottom: 10 }}>Drop-off(%) theo phút</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình'>Drop-off(%) theo phút</div>
                       <div className={`mk-val text`} id="kpi-loyal">41.2%</div>
                       <div className="mk-sub" id="kpi-loyal-sub">Fan base ổn định</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label" style={{ marginBottom: 10 }}>New Viewer Rate</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả mới không xem tập trước đó của chương trình (100 - RVR)'>New Viewer Rate</div>
                       <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 70 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 60 ? 'text' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 40 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
                       <div className="mk-sub" id="kpi-new-sub">Vẫn thu hút người mới</div>
                     </div>
                     <div className="mini-kpi">
-                      <div className="mk-label" style={{ marginBottom: 10 }}>Lead-in</div>
+                      <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in</div>
                       <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 60 ? 'text' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
                       <div className="mk-sub" id="kpi-leadin-sub">Anchor chain prime time</div>
                     </div>
@@ -1082,140 +1543,6 @@ function DashboardContent() {
 
         </div>
         {/* <!-- /tab-program --> */}
-
-
-        {/* <!-- ══════════════════════════════
-        TAB 1 — LINEUP OVERVIEW
-══════════════════════════════ --> */}
-        <div className="view" id="tab-report">
-          <div className="section" style={{ marginBottom: '14px' }}>
-            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div className="section-title">🔍 Chọn chương trình để xem chi tiết</div>
-              <input
-                type="text"
-                placeholder="Tìm kiếm chương trình..."
-                value={programSearchQuery}
-                onChange={(e) => setProgramSearchQuery(e.target.value)}
-                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
-              />
-            </div>
-            <div className="section-body">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '250px', overflowY: 'auto', padding: '12px', background: '#1c2130', borderRadius: '8px', border: '1px solid #333' }}>
-                {filteredProgramsForSelect.map((programItem: any) => {
-                  const isSelected = appliedFilters?.programMultiples?.includes(programItem.program_name);
-                  return (
-                    <div
-                      key={programItem.program_name}
-                      onClick={() => {
-                        let newPrograms = appliedFilters?.programMultiples || [];
-                        if (isSelected) {
-                          newPrograms = newPrograms.filter((p: string) => p !== programItem.program_name);
-                        } else {
-                          newPrograms = [...newPrograms, programItem.program_name];
-                        }
-                        setAppliedFilters({ ...appliedFilters, programMultiples: newPrograms });
-                      }}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: isSelected ? '600' : '400',
-                        background: isSelected ? '#3d8bff' : 'transparent',
-                        color: isSelected ? '#fff' : '#a0aabf',
-                        border: `1px solid ${isSelected ? '#3d8bff' : '#333'}`,
-                        transition: 'all 0.2s',
-                        userSelect: 'none'
-                      }}
-                    >
-                      {programItem.program_name}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          {/* <!-- Program Health Table --> */}
-          <div className="section">
-            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div className="section-title">📊 Contel Health Report</div>
-              <input
-                type="text"
-                placeholder="Tìm kiếm chương trình, kênh, thể loại..."
-                value={reportSearchQuery}
-                onChange={(e) => setReportSearchQuery(e.target.value)}
-                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
-              />
-            </div>
-            <div className="section-body" style={{ padding: '0' }}>
-              <table className="health-table">
-                <thead>
-                  <tr>
-                    <th style={{ paddingLeft: '16px' }}>Ngày</th>
-                    <th>Thời gian</th>
-                    <th>Kênh</th>
-                    <th>Chương trình</th>
-                    <th>Thể loại</th>
-                    <th>Frequency</th>
-                    <th>Thời lượng</th>
-                    <th>Health Score</th>
-                    <th>WTE</th>
-                    <th>RTR</th>
-                    <th>Lead-in</th>
-                    <th>Drop-off</th>
-                  </tr>
-                </thead>
-                {dashboard.isLoading.ContentHealthScoreReport ? <tr><td colSpan={12} style={{ padding: '16px', textAlign: 'center' }}>Loading...</td></tr>
-                  :
-                  <tbody>
-                    {/* <!-- STRENGTHEN --> */}
-                    {filteredReportData.map((program: any, index: number) => (
-                      <tr>
-                        <td style={{ paddingLeft: '16px' }}>
-                          <div>{new Date(program.date).toLocaleDateString("vi-VN")}</div>
-                        </td>
-                        <td>
-                          <div>{new Date(program.event_start_timestamp).toLocaleTimeString("vi-VN")}</div>
-                        </td>
-                        <td>
-                          <div>{program.channel_name_tvd}</div>
-                        </td>
-                        <td>
-                          <div className='prog-name'>{program.program_name}</div>
-                        </td>
-                        <td>
-                          <div>{program.typo_first}</div>
-                        </td>
-                        <td>
-                          <div>{program.frequency}</div>
-                        </td>
-                        <td>
-                          <div>{program.duration}</div>
-                        </td>
-
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) > 70 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) > 60 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) > 40 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) > 70 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) > 60 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) > 40 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
-                          </div>
-                        </td>
-
-                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'text' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
-                        </td>
-                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'text' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
-                        </td>
-                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'text' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
-                        </td>
-                        <td><div className={`metric-num text`}>{(Number(program['Drop-off theo phút']) * 100).toFixed(2)}%</div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>}
-              </table>
-            </div>
-          </div>
-
-        </div>
-        {/* <!-- /tab-lineup --> */}
 
       </div >
       {/* <!-- /main --> */}

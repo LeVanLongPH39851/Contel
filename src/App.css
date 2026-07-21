@@ -548,6 +548,7 @@ body::before {
   font-size: calc(11px + 5px);
   color: var(--text);
   font-family: var(--display);
+  max-width: 260px;
 }
 
 .prog-slot {

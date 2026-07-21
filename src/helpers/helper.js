@@ -28,3 +28,18 @@ export function getISOWeek(date) {
 
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
+
+export const formatDateLast = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()); // 2 chữ số cuối
+    return `${day}/${month}/${year}`;
+};
+
+export const getYesterday = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    return yesterday.toISOString().split('T')[0];
+};
