@@ -1,4 +1,7 @@
-FROM node:22-alpine
+# =========================
+# Build stage
+# =========================
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -8,9 +11,20 @@ RUN npm install
 
 COPY . .
 
-# Chỉ build bằng Vite, không chạy tsc
+# Build Vite
 RUN npx vite build
+
+# =========================
+# Nginx stage
+# =========================
+FROM nginx:alpine AS runner
+
+# Copy file build
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 4173
 
-CMD ["npx", "vite", "preview", "--host", "0.0.0.0"]
+CMD ["nginx", "-g", "daemon off;"]
