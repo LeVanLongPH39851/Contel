@@ -785,7 +785,7 @@ function DashboardContent() {
                 style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px' }}
               />
             </div>
-            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh' }} ref={reportFilterRef}>
+            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh', minHeight: '300px' }} ref={reportFilterRef}>
               <table className="health-table" style={{ position: 'relative' }}>
                 <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--ink-2)', zIndex: 99999999 }}>
                   <tr>
@@ -1002,12 +1002,12 @@ function DashboardContent() {
                     :
                     <>
                       {dashboard.PrimeTimeChain19h0022h30.data.map((program: any, index: number) => (
-                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
+                        <><div className="dep-row" style={{ background: program['% audience thoát ra'] === primeTimeAnchorValue ? 'var(--ink-5)' : 'var(--ink-3)', borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
                           <div>
                             <div className="dep-prog">{program['Chương trình']}</div>
                             <div className="dep-slot">{program.start_hour}h</div>
                           </div>
-                          {program['% audience thoát ra'] === primeTimeAnchorValue && <span className="dep-anchor">ANCHOR</span>}
+                          {program['% audience thoát ra'] === primeTimeAnchorValue && <span className="dep-anchor" title='Chương trình giữ chân khán giả tốt nhất trong khung'>ANCHOR</span>}
                           {program['% audience thoát ra'] >= 75 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
@@ -1084,12 +1084,12 @@ function DashboardContent() {
                     :
                     <>
                       {dashboard.MorningBlock06h3009h00.data.map((program: any, index: number) => (
-                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
+                        <><div className="dep-row" style={{ background: program['% audience thoát ra'] === morningAnchorValue ? 'var(--ink-5)' : 'var(--ink-3)', borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
                           <div>
                             <div className="dep-prog">{program['Chương trình']}</div>
                             <div className="dep-slot">{program.start_hour}h</div>
                           </div>
-                          {program['% audience thoát ra'] === morningAnchorValue && <span className="dep-anchor">ANCHOR</span>}
+                          {program['% audience thoát ra'] === morningAnchorValue && <span className="dep-anchor" title='Chương trình giữ chân khán giả tốt nhất trong khung'>ANCHOR</span>}
                           {program['% audience thoát ra'] >= 75 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
