@@ -8,7 +8,7 @@ export const ContentHealthScoreReport = {
         "force": false,
         "queries": [
             {
-                "time_range": "2026-06-01T00:00:00 : 2026-07-16T00:00:00",
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59",
                 "filters": [
                     {
                         "col": "channel_name_tvd",
@@ -315,7 +315,7 @@ export const ContentHealthScoreReport = {
                         ]
                     }
                 ],
-                "time_range": "2026-06-01T00:00:00 : 2026-07-16T00:00:00"
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59"
             },
             "chart_id": 1021,
             "label_colors": {},

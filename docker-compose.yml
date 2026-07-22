@@ -1,0 +1,28 @@
+# ← **SỬA 1**: Bỏ version (deprecated)
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "81:82"
+    depends_on:
+      - frontend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4173:4173"
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
