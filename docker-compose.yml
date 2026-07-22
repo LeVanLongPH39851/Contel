@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "81:82"
+      - "82:83"
     depends_on:
       - frontend
     restart: unless-stopped
