@@ -1,8 +1,8 @@
 export const ProgramHealthScorecard = {
-    url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A1019%7D&dashboard_id=68`,
+    url: `${import.meta.env.VITE_API_DOMAIN}/api/v1/chart/data?form_data=%7B%22slice_id%22%3A934%7D&dashboard_id=68`,
     payload: {
         "datasource": {
-            "id": 303,
+            "id": 286,
             "type": "table"
         },
         "force": false,
@@ -22,6 +22,11 @@ export const ProgramHealthScorecard = {
                         "val": [
                             "1 weeks"
                         ]
+                    },
+                    {
+                        "col": "start_of_week",
+                        "op": "TEMPORAL_RANGE",
+                        "val": "No filter"
                     }
                 ],
                 "extras": {
@@ -68,7 +73,9 @@ export const ProgramHealthScorecard = {
                     "sqlExpression": "`Content Health Score`"
                 },
                 "order_desc": true,
-                "url_params": {},
+                "url_params": {
+                    "native_filters_key": "e2XQXVprAQBr73cJOGy17HaOWl7e3sLN8yEv45CwB6FBg2VnfcR9V-EVY0UAaI1K"
+                },
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -76,10 +83,12 @@ export const ProgramHealthScorecard = {
             }
         ],
         "form_data": {
-            "datasource": "303__table",
+            "datasource": "286__table",
             "viz_type": "table",
-            "slice_id": 1019,
-            "url_params": {},
+            "slice_id": 934,
+            "url_params": {
+                "native_filters_key": "e2XQXVprAQBr73cJOGy17HaOWl7e3sLN8yEv45CwB6FBg2VnfcR9V-EVY0UAaI1K"
+            },
             "query_mode": "aggregate",
             "groupby": [
                 "program_name",
@@ -169,7 +178,7 @@ export const ProgramHealthScorecard = {
                     }
                 ]
             },
-            "chart_id": 1019,
+            "chart_id": 934,
             "label_colors": {},
             "shared_label_colors": [],
             "map_label_colors": {

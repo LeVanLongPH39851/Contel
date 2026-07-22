@@ -104,7 +104,7 @@ function DashboardContent() {
 
   const dates = useMemo(() => {
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setDate(yesterday.getDate() - 22); //1
 
     const startDate = new Date(yesterday);
     startDate.setMonth(startDate.getMonth() - 3);
@@ -133,7 +133,7 @@ function DashboardContent() {
 
   const weekOptions = useMemo(() => {
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setDate(yesterday.getDate() - 22); //1
 
     const startDate = new Date(yesterday);
     startDate.setMonth(startDate.getMonth() - 3);
@@ -435,7 +435,7 @@ function DashboardContent() {
         <div className="header-meta"><strong>Nguồn data</strong>VTVgo Data · EPG</div>
         <div className="header-divider"></div>
         <div className="header-meta"><strong>Phạm vi</strong>Viewing events trên Smart TV</div>
-        <div className="powered">Powered by <span>ConteL</span> · AMI Group</div>
+        <div className="powered">Powered by <span>NeoTAM</span> · AMI Group</div>
       </div>
 
       {/* <!-- TABS --> */}
@@ -492,7 +492,7 @@ function DashboardContent() {
           <div className="section">
             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 29'}</div>
+                <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 26'}</div>
                 {/* <div className="section-sub">Click tên chương trình để xem chi tiết → Tab Chi tiết</div> */}
               </div>
               <input
@@ -1178,7 +1178,7 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
                 <div className="mini-kpi">
-                  <div className="mk-label">Chương trình dữ chân thấp nhất</div>
+                  <div className="mk-label">Chương trình giữ chân thấp nhất</div>
                   <div className="mk-val red">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.['Chương trình giữ chân thấp nhát']}</div>
                   {/* <div className="mk-sub">Bleed 88% — mất gần hết audience sau chương trình</div> */}
                 </div>
