@@ -5,6 +5,7 @@ import { switchTab, loadProgram, selectProgram, init, drawSparkline } from "./ut
 import { DashboardFilterProvider } from './context/DashboardFilterContext';
 import { useDashboardFilters } from './context/DashboardFilterContext';
 import { toSlug, getISOWeek, formatDate, formatDateLast, getYesterday } from './helpers/helper';
+import logoNeoTam from './assets/neotamdark.png';
 
 function DashboardContent() {
   const dashboard = useDashboardData();
@@ -322,7 +323,7 @@ function DashboardContent() {
     <>
       {/* <!-- NAV --> */}
       <nav className="nav">
-        <div className="nav-logo">ConteL</div>
+        <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '8px' }}><img src={logoNeoTam} alt="Neo Tam" width="113px" /></div>
         <div className="nav-sub">· Content Health</div>
         <div className="nav-divider"></div>
         <div className="nav-product">VTV Content Health Dashboard<span>· Ban Chương trình</span></div>
@@ -439,8 +440,8 @@ function DashboardContent() {
 
       {/* <!-- TABS --> */}
       <div className="tab-bar">
-        <div className="tab active" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Tổng quan chương trình</div>
-        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Tổng quan theo kênh</div>
+        <div className="tab active" onClick={() => { switchTab('lineup'); setTab('lineup') }}>📋 Tổng quan theo kênh</div>
+        <div className="tab" onClick={() => { switchTab('report'); setTab('report') }}>📊 Tổng quan chương trình</div>
         <div className="tab" onClick={() => { switchTab('dependency'); setTab('dependency') }}>🔗 Khung chương trình trong ngày</div>
         {/* <div className="tab" onClick={() => { switchTab('insights'); setTab('insights') }}>⚡ Quyết định tuần này</div> */}
         <div className="tab" onClick={() => { switchTab('program'); setTab('program') }}>🔍 Chi tiết chương trình</div>
@@ -475,13 +476,13 @@ function DashboardContent() {
             </div>
             <div className="sum-card">
               <div className="sum-label" title='Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa'>Avg Watch Time Efficiency</div>
-              <div className="sum-val text">{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : AvgRetentionRate}%</div>
+              <div className={`sum-val ${Number(AvgRetentionRate) >= 75 ? 'green' : Number(AvgRetentionRate) >= 55 ? 'blue' : Number(AvgRetentionRate) >= 35 ? 'amber' : 'red'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : AvgRetentionRate}%</div>
               <div className={`sum-delta ${dashboard.isLoading.AvgRetentionRate ? 'down' : Number(AvgRetentionRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgRetentionRate ? 'Loading...' : Number(AvgRetentionRateDelta) > 0 ? '↑ +' + AvgRetentionRateDelta : '↓ ' + AvgRetentionRateDelta}% so với tuần trước</div>
               {/* <div className="sum-sub">Cuối chương trình · avg VTV1</div> */}
             </div>
             <div className="sum-card">
               <div className="sum-label" title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Avg Return Viewer Rate</div>
-              <div className="sum-val green">{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : AvgReturnViewerRate}%</div>
+              <div className={`sum-val ${Number(AvgReturnViewerRate) >= 75 ? 'green' : Number(AvgReturnViewerRate) >= 55 ? 'blue' : Number(AvgReturnViewerRate) >= 35 ? 'amber' : 'red'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : AvgReturnViewerRate}%</div>
               <div className={`sum-delta ${dashboard.isLoading.AvgReturnViewerRate ? 'down' : Number(AvgReturnViewerRateDelta) > 0 ? 'up' : 'down'}`}>{dashboard.isLoading.AvgReturnViewerRate ? 'Loading...' : Number(AvgReturnViewerRateDelta) > 0 ? '↑ +' + AvgReturnViewerRateDelta : '↓ ' + AvgReturnViewerRateDelta}% so với tuần trước</div>
               {/* <div className="sum-sub">Device đã xem tuần trước quay lại</div> */}
             </div>
@@ -491,7 +492,7 @@ function DashboardContent() {
           <div className="section">
             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 27'}</div>
+                <div className="section-title">📊 Program Health Scorecard · {appliedFilters?.channels?.[0] || 'VTV1'} · {appliedFilters?.weeks?.[0] || 'Tuần 29'}</div>
                 {/* <div className="section-sub">Click tên chương trình để xem chi tiết → Tab Chi tiết</div> */}
               </div>
               <input
@@ -565,13 +566,13 @@ function DashboardContent() {
                         </td>
                         <td><div className="sparkline" id={`${program.program_name}`}></div></td>
                         <td><span className={`badge ${program.status.toLowerCase().replace(' ', '-')}`}>{program.status}</span></td>
-                        <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) > 70 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) > 60 ? 'blue' : program['Watch Time Efficiency']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Watch Time Efficiency']?.toFixed(1) >= 75 ? 'green' : program['Watch Time Efficiency']?.toFixed(1) >= 55 ? 'blue' : program['Watch Time Efficiency']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['Watch Time Efficiency']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">↑ +1.4pp</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) > 70 ? 'green' : program['Return Viewer Rate']?.toFixed(1) > 60 ? 'blue' : program['Return Viewer Rate']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Return Viewer Rate']?.toFixed(1) >= 75 ? 'green' : program['Return Viewer Rate']?.toFixed(1) >= 55 ? 'blue' : program['Return Viewer Rate']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['Return Viewer Rate']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">Loyal base cao</div> */}
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) > 70 ? 'green' : program['Lead-in Effect']?.toFixed(1) > 60 ? 'blue' : program['Lead-in Effect']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in Effect']?.toFixed(1) >= 75 ? 'green' : program['Lead-in Effect']?.toFixed(1) >= 55 ? 'blue' : program['Lead-in Effect']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['Lead-in Effect']?.toFixed(1)}%</div>
                           {/* <div className="metric-sub">→ Phim VTV1 20h</div> */}
                         </td>
                         {/* <td style={{ fontSize: '10px', color: 'var(--green)' }}>Đề xuất nâng tier giá slot QC</td> */}
@@ -956,15 +957,15 @@ function DashboardContent() {
 
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) > 70 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) > 60 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) > 40 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) > 70 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) > 60 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) > 40 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
+                            <div className="score-ring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="#1c2130" stroke-width="4" /><circle cx="20" cy="20" r="15" fill="none" stroke={program['Content Health Score']?.toFixed(0) >= 75 ? '#00e5a0' : program['Content Health Score']?.toFixed(0) >= 55 ? '#3d8bff' : program['Content Health Score']?.toFixed(0) >= 35 ? '#f5a623' : '#ff3d5a'} stroke-width="4" stroke-dasharray={`${program['Content Health Score']?.toFixed(0) / 100 * 94.2} 94.2`} stroke-linecap="round" /></svg><div className="score-num" style={{ color: program['Content Health Score']?.toFixed(0) >= 75 ? 'var(--green)' : program['Content Health Score']?.toFixed(0) >= 55 ? 'var(--blue)' : program['Content Health Score']?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)' }}>{program['Content Health Score']?.toFixed(0)}</div></div>
                           </div>
                         </td>
 
-                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) > 70 ? 'green' : program['WTE']?.toFixed(1) > 60 ? 'blue' : program['WTE']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['WTE']?.toFixed(1) >= 75 ? 'green' : program['WTE']?.toFixed(1) >= 55 ? 'blue' : program['WTE']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['WTE']?.toFixed(1)}%</div>
                         </td>
-                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) > 70 ? 'green' : program['RTR']?.toFixed(1) > 60 ? 'blue' : program['RTR']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['RTR']?.toFixed(1) >= 75 ? 'green' : program['RTR']?.toFixed(1) >= 55 ? 'blue' : program['RTR']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['RTR']?.toFixed(1)}%</div>
                         </td>
-                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) > 70 ? 'green' : program['Lead-in']?.toFixed(1) > 60 ? 'blue' : program['Lead-in']?.toFixed(1) > 40 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
+                        <td><div className={`metric-num ${program['Lead-in']?.toFixed(1) >= 75 ? 'green' : program['Lead-in']?.toFixed(1) >= 55 ? 'blue' : program['Lead-in']?.toFixed(1) >= 35 ? 'amber' : 'red'}`}>{program['Lead-in']?.toFixed(1)}%</div>
                         </td>
                         <td><div className={`metric-num text`}>{(Number(program['Drop-off theo phút']) * 100).toFixed(2)}%</div>
                         </td>
@@ -1001,21 +1002,21 @@ function DashboardContent() {
                     :
                     <>
                       {dashboard.PrimeTimeChain19h0022h30.data.map((program: any, index: number) => (
-                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] > 70 ? 'rgba(255,61,90,.25)' : '' }}>
+                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
                           <div>
                             <div className="dep-prog">{program['Chương trình']}</div>
                             <div className="dep-slot">{program.start_hour}h</div>
                           </div>
                           {program['% audience thoát ra'] === primeTimeAnchorValue && <span className="dep-anchor">ANCHOR</span>}
-                          {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
+                          {program['% audience thoát ra'] >= 75 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] >= 75 ? 'red' : program['% audience thoát ra'] >= 35 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.PrimeTimeChain19h0022h30.data.length - 1 &&
-                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
+                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] >= 75 ? 'var(--green)' : program['% audience tiếp tục xem'] >= 35 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
+                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] >= 75 ? 'var(--green)' : program['% audience tiếp tục xem'] >= 35 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -1083,21 +1084,21 @@ function DashboardContent() {
                     :
                     <>
                       {dashboard.MorningBlock06h3009h00.data.map((program: any, index: number) => (
-                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] > 70 ? 'rgba(255,61,90,.25)' : '' }}>
+                        <><div className="dep-row" style={{ borderColor: program['% audience thoát ra'] >= 75 ? 'rgba(255,61,90,.25)' : '' }}>
                           <div>
                             <div className="dep-prog">{program['Chương trình']}</div>
                             <div className="dep-slot">{program.start_hour}h</div>
                           </div>
                           {program['% audience thoát ra'] === morningAnchorValue && <span className="dep-anchor">ANCHOR</span>}
-                          {program['% audience thoát ra'] > 70 && <span className="dep-bleed">HIGH BLEED</span>}
+                          {program['% audience thoát ra'] >= 75 && <span className="dep-bleed">HIGH BLEED</span>}
                           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-3)' }}>Khán giả thoát ra</div>
-                            <div className={`metric-num ${program['% audience thoát ra'] > 70 ? 'red' : program['% audience thoát ra'] > 40 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
+                            <div className={`metric-num ${program['% audience thoát ra'] >= 75 ? 'red' : program['% audience thoát ra'] >= 35 ? 'amber' : program['% audience thoát ra'] > 10 ? 'blue' : 'green'}`} style={{ fontSize: '16px' }}>{program['% audience thoát ra']?.toFixed(0)}%</div>
                           </div>
                         </div>
                           {index < dashboard.MorningBlock06h3009h00.data.length - 1 &&
-                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
-                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] > 70 ? 'var(--green)' : program['% audience tiếp tục xem'] > 40 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
+                            <><div style={{ textAlign: 'center', fontSize: '20px', color: program['% audience tiếp tục xem'] >= 75 ? 'var(--green)' : program['% audience tiếp tục xem'] >= 35 ? 'var(--amber)' : 'var(--red)', padding: '2px' }}>↓</div>
+                              <div style={{ textAlign: 'center', fontSize: '11px', color: program['% audience tiếp tục xem'] >= 75 ? 'var(--green)' : program['% audience tiếp tục xem'] >= 35 ? 'var(--amber)' : 'var(--red)', marginTop: '-6px', marginBottom: '2px', fontWeight: '700' }}>{program['% audience tiếp tục xem']?.toFixed(0)}% khán giả tiếp tục xem</div></>
                           }
                         </>
                       ))
@@ -1177,23 +1178,23 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
                 <div className="mini-kpi">
-                  <div className="mk-label">Điểm rò rỉ cao nhất</div>
-                  <div className="mk-val red">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.['Điểm bleed cao nhất']}</div>
+                  <div className="mk-label">Chương trình dữ chân thấp nhất</div>
+                  <div className="mk-val red">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.['Chương trình giữ chân thấp nhát']}</div>
                   {/* <div className="mk-sub">Bleed 88% — mất gần hết audience sau chương trình</div> */}
                 </div>
                 <div className="mini-kpi">
                   <div className="mk-label" title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in TB toàn kênh</div>
-                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 70 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0)}%</div>
+                  <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) >= 75 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0)}%</div>
                   {/* <div className="mk-sub">↑ +3pp vs tuần trước</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label">Chương trình giữ tốt nhất</div>
+                  <div className="mk-label">Chương trình giữ chân tốt nhất</div>
                   <div className="mk-val green">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Chương trình giữ tốt nhất"]}</div>
                   {/* <div className="mk-sub">Bleed chỉ 7% — anchor mạnh nhất</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label" title='Số chương trình At risk'>Rủi ro Dây chuyền</div>
-                  <div className={`mk-val red`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Rủi ro chain reaction"]} điểm</div>
+                  <div className="mk-label" title='Số chương trình At risk'>Số chương trình AT RISK</div>
+                  <div className={`mk-val red`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Số chương trình AT RISK"]}</div>
                   {/* <div className="mk-sub">Prime time 22h & Trưa 12h</div> */}
                 </div>
               </div>
@@ -1517,7 +1518,7 @@ function DashboardContent() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', height: "100%" }}>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả quay lại xem từ tập/tuần trước'>Return Viewer Rate</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 60 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) >= 75 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) >= 55 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0).toFixed(1) >= 35 ? 'amber' : 'red'}`} id="kpi-rvr">68.9%</div>
                       <div className="mk-sub" id="kpi-rvr-sub">↑ +2.3pp vs tuần trước</div>
                     </div>
                     <div className="mini-kpi">
@@ -1527,12 +1528,12 @@ function DashboardContent() {
                     </div>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả mới không xem tập trước đó của chương trình (100 - RVR)'>New Viewer Rate</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 70 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 60 ? 'blue' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) > 40 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) >= 75 ? 'green' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) >= 55 ? 'blue' : 100 - (dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"] || 0) >= 35 ? 'amber' : 'red'}`} id="kpi-new">31.1%</div>
                       <div className="mk-sub" id="kpi-new-sub">Vẫn thu hút người mới</div>
                     </div>
                     <div className="mini-kpi">
                       <div className="mk-label" style={{ marginBottom: 10 }} title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in</div>
-                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 70 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 60 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) > 40 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
+                      <div className={`mk-val ${dashboard.isLoading.ProgramInfor ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) >= 75 ? 'green' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) >= 55 ? 'blue' : (dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"] || 0).toFixed(1) >= 35 ? 'amber' : 'red'}`} id="kpi-leadin">68%</div>
                       <div className="mk-sub" id="kpi-leadin-sub">Anchor chain prime time</div>
                     </div>
                   </div>

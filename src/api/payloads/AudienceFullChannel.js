@@ -8,7 +8,7 @@ export const AudienceFullChannel = {
         "force": false,
         "queries": [
             {
-                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)",
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59",
                 "filters": [
                     {
                         "col": "channel_name_tvd",
@@ -41,27 +41,26 @@ export const AudienceFullChannel = {
                         "aggregate": "MAX",
                         "column": {
                             "advanced_data_type": null,
-                            "changed_on": "2026-06-26T02:33:37.265827",
-                            "column_name": "is_max_leadin",
-                            "created_on": "2026-06-26T02:33:37.265826",
+                            "certification_details": null,
+                            "certified_by": null,
+                            "column_name": "is_min_leadin",
                             "description": null,
-                            "expression": "CASE WHEN lead_in_effect = MAX(lead_in_effect) OVER() THEN program_name ELSE NULL END",
-                            "extra": "{}",
+                            "expression": "CASE WHEN lead_in_effect = MIN(lead_in_effect) OVER() THEN program_name ELSE NULL END",
                             "filterable": true,
                             "groupby": true,
-                            "id": 3577,
-                            "is_active": true,
+                            "id": 3576,
+                            "is_certified": false,
                             "is_dttm": false,
                             "python_date_format": null,
                             "type": null,
                             "type_generic": null,
-                            "uuid": "0afbf08c-f85d-4af5-9582-562cbea2147e",
-                            "verbose_name": null
+                            "verbose_name": null,
+                            "warning_markdown": null
                         },
                         "datasourceWarning": false,
                         "expressionType": "SIMPLE",
                         "hasCustomLabel": true,
-                        "label": "Điểm bleed cao nhất",
+                        "label": "Chương trình giữ chân thấp nhát",
                         "optionName": "metric_hg40t60482a_ii3c2gst6zb",
                         "sqlExpression": null
                     },
@@ -79,22 +78,21 @@ export const AudienceFullChannel = {
                         "aggregate": "MIN",
                         "column": {
                             "advanced_data_type": null,
-                            "changed_on": "2026-06-26T02:33:37.265800",
-                            "column_name": "is_min_leadin",
-                            "created_on": "2026-06-26T02:33:37.265796",
+                            "certification_details": null,
+                            "certified_by": null,
+                            "column_name": "is_max_leadin",
                             "description": null,
-                            "expression": "CASE WHEN lead_in_effect = MIN(lead_in_effect) OVER() THEN program_name ELSE NULL END",
-                            "extra": "{}",
+                            "expression": "CASE WHEN lead_in_effect = MAX(lead_in_effect) OVER() THEN program_name ELSE NULL END",
                             "filterable": true,
                             "groupby": true,
-                            "id": 3576,
-                            "is_active": true,
+                            "id": 3577,
+                            "is_certified": false,
                             "is_dttm": false,
                             "python_date_format": null,
                             "type": null,
                             "type_generic": null,
-                            "uuid": "03d179e1-c4dc-4acc-a6f4-e1d64ec78d38",
-                            "verbose_name": null
+                            "verbose_name": null,
+                            "warning_markdown": null
                         },
                         "datasourceWarning": false,
                         "expressionType": "SIMPLE",
@@ -109,9 +107,9 @@ export const AudienceFullChannel = {
                         "datasourceWarning": false,
                         "expressionType": "SQL",
                         "hasCustomLabel": true,
-                        "label": "Rủi ro chain reaction",
+                        "label": "Số chương trình AT RISK",
                         "optionName": "metric_ozv1wjunr5_eqc51pi0r27",
-                        "sqlExpression": "COUNT(CASE WHEN lead_in_effect < 40 THEN 1 END)"
+                        "sqlExpression": "COUNT(CASE WHEN lead_in_effect < 0.35 THEN 1 END)"
                     }
                 ],
                 "orderby": [
@@ -120,27 +118,26 @@ export const AudienceFullChannel = {
                             "aggregate": "MAX",
                             "column": {
                                 "advanced_data_type": null,
-                                "changed_on": "2026-06-26T02:33:37.265827",
-                                "column_name": "is_max_leadin",
-                                "created_on": "2026-06-26T02:33:37.265826",
+                                "certification_details": null,
+                                "certified_by": null,
+                                "column_name": "is_min_leadin",
                                 "description": null,
-                                "expression": "CASE WHEN lead_in_effect = MAX(lead_in_effect) OVER() THEN program_name ELSE NULL END",
-                                "extra": "{}",
+                                "expression": "CASE WHEN lead_in_effect = MIN(lead_in_effect) OVER() THEN program_name ELSE NULL END",
                                 "filterable": true,
                                 "groupby": true,
-                                "id": 3577,
-                                "is_active": true,
+                                "id": 3576,
+                                "is_certified": false,
                                 "is_dttm": false,
                                 "python_date_format": null,
                                 "type": null,
                                 "type_generic": null,
-                                "uuid": "0afbf08c-f85d-4af5-9582-562cbea2147e",
-                                "verbose_name": null
+                                "verbose_name": null,
+                                "warning_markdown": null
                             },
                             "datasourceWarning": false,
                             "expressionType": "SIMPLE",
                             "hasCustomLabel": true,
-                            "label": "Điểm bleed cao nhất",
+                            "label": "Chương trình giữ chân thấp nhát",
                             "optionName": "metric_hg40t60482a_ii3c2gst6zb",
                             "sqlExpression": null
                         },
@@ -151,7 +148,9 @@ export const AudienceFullChannel = {
                 "row_limit": 1,
                 "series_limit": 0,
                 "order_desc": false,
-                "url_params": {},
+                "url_params": {
+                    "native_filters_key": "-mQ7ZNm7nZHmipq7Y6klDU3QIqWi0Ssztt3PRdsIUBNtlAsKWBJWfc6JpfveNOe2"
+                },
                 "custom_params": {},
                 "custom_form_data": {},
                 "post_processing": [],
@@ -162,7 +161,9 @@ export const AudienceFullChannel = {
             "datasource": "288__table",
             "viz_type": "table",
             "slice_id": 942,
-            "url_params": {},
+            "url_params": {
+                "native_filters_key": "-mQ7ZNm7nZHmipq7Y6klDU3QIqWi0Ssztt3PRdsIUBNtlAsKWBJWfc6JpfveNOe2"
+            },
             "query_mode": "aggregate",
             "groupby": [],
             "temporal_columns_lookup": {
@@ -173,27 +174,26 @@ export const AudienceFullChannel = {
                     "aggregate": "MAX",
                     "column": {
                         "advanced_data_type": null,
-                        "changed_on": "2026-06-26T02:33:37.265827",
-                        "column_name": "is_max_leadin",
-                        "created_on": "2026-06-26T02:33:37.265826",
+                        "certification_details": null,
+                        "certified_by": null,
+                        "column_name": "is_min_leadin",
                         "description": null,
-                        "expression": "CASE WHEN lead_in_effect = MAX(lead_in_effect) OVER() THEN program_name ELSE NULL END",
-                        "extra": "{}",
+                        "expression": "CASE WHEN lead_in_effect = MIN(lead_in_effect) OVER() THEN program_name ELSE NULL END",
                         "filterable": true,
                         "groupby": true,
-                        "id": 3577,
-                        "is_active": true,
+                        "id": 3576,
+                        "is_certified": false,
                         "is_dttm": false,
                         "python_date_format": null,
                         "type": null,
                         "type_generic": null,
-                        "uuid": "0afbf08c-f85d-4af5-9582-562cbea2147e",
-                        "verbose_name": null
+                        "verbose_name": null,
+                        "warning_markdown": null
                     },
                     "datasourceWarning": false,
                     "expressionType": "SIMPLE",
                     "hasCustomLabel": true,
-                    "label": "Điểm bleed cao nhất",
+                    "label": "Chương trình giữ chân thấp nhát",
                     "optionName": "metric_hg40t60482a_ii3c2gst6zb",
                     "sqlExpression": null
                 },
@@ -211,22 +211,21 @@ export const AudienceFullChannel = {
                     "aggregate": "MIN",
                     "column": {
                         "advanced_data_type": null,
-                        "changed_on": "2026-06-26T02:33:37.265800",
-                        "column_name": "is_min_leadin",
-                        "created_on": "2026-06-26T02:33:37.265796",
+                        "certification_details": null,
+                        "certified_by": null,
+                        "column_name": "is_max_leadin",
                         "description": null,
-                        "expression": "CASE WHEN lead_in_effect = MIN(lead_in_effect) OVER() THEN program_name ELSE NULL END",
-                        "extra": "{}",
+                        "expression": "CASE WHEN lead_in_effect = MAX(lead_in_effect) OVER() THEN program_name ELSE NULL END",
                         "filterable": true,
                         "groupby": true,
-                        "id": 3576,
-                        "is_active": true,
+                        "id": 3577,
+                        "is_certified": false,
                         "is_dttm": false,
                         "python_date_format": null,
                         "type": null,
                         "type_generic": null,
-                        "uuid": "03d179e1-c4dc-4acc-a6f4-e1d64ec78d38",
-                        "verbose_name": null
+                        "verbose_name": null,
+                        "warning_markdown": null
                     },
                     "datasourceWarning": false,
                     "expressionType": "SIMPLE",
@@ -241,9 +240,9 @@ export const AudienceFullChannel = {
                     "datasourceWarning": false,
                     "expressionType": "SQL",
                     "hasCustomLabel": true,
-                    "label": "Rủi ro chain reaction",
+                    "label": "Số chương trình AT RISK",
                     "optionName": "metric_ozv1wjunr5_eqc51pi0r27",
-                    "sqlExpression": "COUNT(CASE WHEN lead_in_effect < 40 THEN 1 END)"
+                    "sqlExpression": "COUNT(CASE WHEN lead_in_effect < 0.35 THEN 1 END)"
                 }
             ],
             "all_columns": [
@@ -306,7 +305,7 @@ export const AudienceFullChannel = {
                         ]
                     }
                 ],
-                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)"
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59"
             },
             "chart_id": 942,
             "label_colors": {},

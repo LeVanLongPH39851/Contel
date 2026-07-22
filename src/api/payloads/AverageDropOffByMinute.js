@@ -8,7 +8,7 @@ export const AverageDropOffByMinute = {
         "force": false,
         "queries": [
             {
-                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)",
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59",
                 "filters": [
                     {
                         "col": "channel_name_tvd",
@@ -110,7 +110,7 @@ export const AverageDropOffByMinute = {
                         ]
                     }
                 ],
-                "time_range": "DATEADD(DATETIME(\"today\"),-15, day) : DATEADD(DATETIME(\"today\"),-1, day)"
+                "time_range": "2026-06-30T00:00:00 : 2026-06-30T23:59:59"
             },
             "chart_id": 930,
             "label_colors": {},
