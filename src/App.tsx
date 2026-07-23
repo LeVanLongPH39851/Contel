@@ -56,11 +56,24 @@ function DashboardContent() {
   const [reportColFilters, setReportColFilters] = useState<Record<string, string[]>>({});
   const [reportFilterOpen, setReportFilterOpen] = useState<string | null>(null);
   const reportFilterRef = useRef<HTMLDivElement | null>(null);
+  const [scorecardColFilters, setScorecardColFilters] = useState<Record<string, string[]>>({});
+  const [scorecardFilterOpen, setScorecardFilterOpen] = useState<string | null>(null);
+  const scorecardFilterRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (reportFilterRef.current && !reportFilterRef.current.contains(e.target as Node)) {
         setReportFilterOpen(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (scorecardFilterRef.current && !scorecardFilterRef.current.contains(e.target as Node)) {
+        setScorecardFilterOpen(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -92,7 +105,7 @@ function DashboardContent() {
       Object.keys(sparkData).forEach(k => drawSparkline(k, sparkData[k].d, sparkData[k].c));
     }
     init(programs);
-  }, [dashboard.isLoading.ProgramHealthScorecard, programs, scorecardSearchQuery]);
+  }, [dashboard.isLoading.ProgramHealthScorecard, programs, scorecardSearchQuery, scorecardColFilters]);
 
   const [selectedProgramSlug, setSelectedProgramSlug] = useState(null);
 
@@ -104,7 +117,7 @@ function DashboardContent() {
 
   const dates = useMemo(() => {
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 22); //1
+    yesterday.setDate(yesterday.getDate() - 23); //1
 
     const startDate = new Date(yesterday);
     startDate.setMonth(startDate.getMonth() - 3);
@@ -133,7 +146,7 @@ function DashboardContent() {
 
   const weekOptions = useMemo(() => {
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 22); //1
+    yesterday.setDate(yesterday.getDate() - 23); //1
 
     const startDate = new Date(yesterday);
     startDate.setMonth(startDate.getMonth() - 3);
@@ -234,6 +247,13 @@ function DashboardContent() {
       ));
     }
 
+    // column filters
+    for (const [key, selected] of Object.entries(scorecardColFilters)) {
+      if (selected.length > 0) {
+        result = result.filter((p: any) => selected.includes(String(p[key] ?? '')));
+      }
+    }
+
     if (scorecardSortConfig) {
       const { key, dir } = scorecardSortConfig;
       result = [...result].sort((a: any, b: any) => {
@@ -246,7 +266,7 @@ function DashboardContent() {
     }
 
     return result;
-  }, [dashboard?.ProgramHealthScorecard?.data, scorecardSearchQuery, scorecardSortConfig]);
+  }, [dashboard?.ProgramHealthScorecard?.data, scorecardSearchQuery, scorecardSortConfig, scorecardColFilters]);
 
   const REPORT_FILTERABLE_KEYS = ['typo_first', 'frequency', 'duration', 'channel_name_tvd'];
 
@@ -269,6 +289,28 @@ function DashboardContent() {
     }
     return result;
   }, [dashboard?.ContentHealthScoreReport?.data]);
+
+  const SCORECARD_FILTERABLE_KEYS = ["status"];
+
+  const scorecardUniqueValues = useMemo(() => {
+    const data = dashboard?.ProgramHealthScorecard?.data;
+    if (!data) return {} as Record<string, string[]>;
+    const map: Record<string, Set<string>> = {};
+    for (const key of SCORECARD_FILTERABLE_KEYS) {
+      map[key] = new Set();
+    }
+    for (const row of data) {
+      for (const key of SCORECARD_FILTERABLE_KEYS) {
+        const v = row[key];
+        if (v != null && v !== '') map[key].add(String(v));
+      }
+    }
+    const result: Record<string, string[]> = {};
+    for (const key of SCORECARD_FILTERABLE_KEYS) {
+      result[key] = Array.from(map[key]).sort();
+    }
+    return result;
+  }, [dashboard?.ProgramHealthScorecard?.data]);
 
   const filteredReportData = useMemo(() => {
     const data = dashboard?.ContentHealthScoreReport?.data;
@@ -350,7 +392,7 @@ function DashboardContent() {
             type="date"
             className="nav-select-2"
             value={appliedFilters?.startDate?.[0] || dates[0]?.value}
-            onChange={(e) => setAppliedFilters({ ...appliedFilters, startDate: [e.target.value] })}
+            onChange={(e) => setAppliedFilters({ ...appliedFilters, startDate: [e.target.value], endDate: appliedFilters?.endDate ?? [dates[0]?.value] })}
             min={dates[dates.length - 1]?.value}
             max={appliedFilters?.endDate?.[0] || dates[0]?.value}
           />
@@ -503,7 +545,7 @@ function DashboardContent() {
                 style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #333', background: '#1c2130', color: '#fff', outline: 'none', width: '250px', alignSelf: 'center' }}
               />
             </div>
-            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh' }}>
+            <div className="section-body" style={{ padding: '0', overflowY: 'scroll', maxHeight: '80vh' }} ref={scorecardFilterRef}>
               <table className="health-table" style={{ position: 'relative' }}>
                 <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--ink-2)', zIndex: 99999999 }} >
                   <tr>
@@ -511,13 +553,26 @@ function DashboardContent() {
                       { label: 'Chương trình', key: 'program_name', style: { paddingLeft: '16px' } },
                       { label: 'Health Score', key: 'Content Health Score' },
                       { label: 'Trend 4 tuần', key: null },
-                      { label: 'Trạng thái', key: 'status' },
+                      { label: 'Trạng thái', key: 'status', filterable: true },
                       { label: 'Watch Time Efficiency', key: 'Watch Time Efficiency', title: 'Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa' },
-                      { label: 'Return Viewer', key: 'Return Viewer Rate', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
+                      { label: 'Return Viewer Rate', key: 'Return Viewer Rate', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
                       { label: 'Lead-in Effect', key: 'Lead-in Effect', title: 'Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó' },
-                    ] as { label: string; key: string | null; style?: React.CSSProperties; title?: string }[]).map(({ label, key, style, title }) => {
+                    ] as { label: string; key: string | null; style?: React.CSSProperties; title?: string, filterable?: boolean; }[]).map(({ label, key, style, title, filterable }) => {
                       const isActive = key !== null && scorecardSortConfig?.key === key;
                       const dir = isActive ? scorecardSortConfig!.dir : null;
+                      const hasFilter = filterable && (scorecardColFilters[key!]?.length ?? 0) > 0;
+                      const isFilterOpen = scorecardFilterOpen === key;
+                      const uniqueVals = scorecardUniqueValues[key!] ?? [];
+                      const selectedVals = scorecardColFilters[key!] ?? [];
+
+                      const toggleVal = (val: string) => {
+                        setScorecardColFilters(prev => {
+                          const cur = prev[key!] ?? [];
+                          const next = cur.includes(val) ? cur.filter(v => v !== val) : [...cur, val];
+                          return { ...prev, [key!]: next };
+                        });
+                      };
+                      
                       return (
                         <th
                           key={label}
@@ -526,6 +581,7 @@ function DashboardContent() {
                             cursor: key !== null ? 'pointer' : 'default',
                             userSelect: 'none',
                             whiteSpace: 'nowrap',
+                            position: 'relative',
                           }}
                           onClick={() => key !== null && handleScorecardSort(key)}
                         >
@@ -542,7 +598,81 @@ function DashboardContent() {
                                 {dir === 'asc' ? '▲' : dir === 'desc' ? '▼' : '⇅'}
                               </span>
                             )}
+                            {filterable && (
+                              <span
+                                title="Lọc theo giá trị"
+                                onClick={(e) => { e.stopPropagation(); setScorecardFilterOpen(isFilterOpen ? null : key); }}
+                                style={{
+                                  cursor: 'pointer',
+                                  fontSize: '11px',
+                                  color: hasFilter ? '#f5a623' : '#556',
+                                  background: hasFilter ? 'rgba(245,166,35,0.12)' : 'transparent',
+                                  borderRadius: '3px',
+                                  padding: '1px 3px',
+                                  border: hasFilter ? '1px solid rgba(245,166,35,0.3)' : '1px solid transparent',
+                                  transition: 'all 0.15s',
+                                  lineHeight: 1,
+                                  marginLeft: '2px',
+                                }}
+                              >☰</span>
+                            )}
                           </span>
+                          {/* dropdown */}
+                          {filterable && isFilterOpen && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                zIndex: 9999,
+                                background: '#161b27',
+                                border: '1px solid #2a3045',
+                                borderRadius: '8px',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                                minWidth: '180px',
+                                maxHeight: '260px',
+                                overflowY: 'auto',
+                                padding: '6px 0',
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {/* clear btn */}
+                              <div style={{ padding: '4px 12px 6px', borderBottom: '1px solid #2a3045', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '11px', color: '#6a7390' }}>{selectedVals.length ? `${selectedVals.length} đã chọn` : 'Tất cả'}</span>
+                                {selectedVals.length > 0 && (
+                                  <span
+                                    onClick={() => setScorecardColFilters(prev => ({ ...prev, [key!]: [] }))}
+                                    style={{ fontSize: '11px', color: '#f5a623', cursor: 'pointer', textDecoration: 'underline' }}
+                                  >Xóa</span>
+                                )}
+                              </div>
+                              {uniqueVals.map(val => {
+                                const checked = selectedVals.includes(val);
+                                return (
+                                  <label
+                                    key={val}
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: '8px',
+                                      padding: '5px 12px', cursor: 'pointer',
+                                      background: checked ? 'rgba(61,139,255,0.08)' : 'transparent',
+                                      transition: 'background 0.15s',
+                                      fontSize: '12px', color: checked ? '#3d8bff' : '#b0bac8',
+                                    }}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = checked ? 'rgba(61,139,255,0.14)' : 'rgba(255,255,255,0.04)'; }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = checked ? 'rgba(61,139,255,0.08)' : 'transparent'; }}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={checked}
+                                      onChange={() => toggleVal(val)}
+                                      style={{ accentColor: '#3d8bff', width: '13px', height: '13px', cursor: 'pointer' }}
+                                    />
+                                    {val}
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
                         </th>
                       );
                     })}
@@ -799,7 +929,7 @@ function DashboardContent() {
                       { label: 'Thời lượng', key: 'duration', filterable: true },
                       { label: 'Health Score', key: 'Content Health Score' },
                       { label: 'WTE', key: 'WTE', title: 'Tỷ lệ giữa tổng thời gian xem thực tế và tổng thời gian có thể xem tối đa' },
-                      { label: 'RTR', key: 'RTR', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
+                      { label: 'RVR', key: 'RTR', title: 'Tỷ lệ khán giả quay lại xem từ tập/tuần trước' },
                       { label: 'Lead-in', key: 'Lead-in', title: 'Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó' },
                       { label: 'Drop-off', key: 'Drop-off theo phút', title: 'Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình' },
                     ] as { label: string; key: string; style?: React.CSSProperties; title?: string; filterable?: boolean }[]).map(({ label, key, style, title, filterable }) => {
@@ -1178,7 +1308,7 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
                 <div className="mini-kpi">
-                  <div className="mk-label">Chương trình giữ chân thấp nhất</div>
+                  <div className="mk-label">Chương trình giữ chân <span style={{color: 'rgb(255, 61, 90)', fontWeight: '700'}}>thấp nhất</span></div>
                   <div className="mk-val red">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.['Chương trình giữ chân thấp nhát']}</div>
                   {/* <div className="mk-sub">Bleed 88% — mất gần hết audience sau chương trình</div> */}
                 </div>
@@ -1188,12 +1318,12 @@ function DashboardContent() {
                   {/* <div className="mk-sub">↑ +3pp vs tuần trước</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label">Chương trình giữ chân tốt nhất</div>
+                  <div className="mk-label">Chương trình giữ chân <span style={{color: 'rgb(0, 229, 160)', fontWeight: '700'}}>tốt nhất</span></div>
                   <div className="mk-val green">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Chương trình giữ tốt nhất"]}</div>
                   {/* <div className="mk-sub">Bleed chỉ 7% — anchor mạnh nhất</div> */}
                 </div>
                 <div className="mini-kpi">
-                  <div className="mk-label" title='Số chương trình At risk'>Số chương trình AT RISK</div>
+                  <div className="mk-label" title='Số chương trình At risk'>Số chương trình <span style={{color: 'rgb(255, 61, 90)', fontWeight: '700'}}>AT RISK</span></div>
                   <div className={`mk-val red`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Số chương trình AT RISK"]}</div>
                   {/* <div className="mk-sub">Prime time 22h & Trưa 12h</div> */}
                 </div>
