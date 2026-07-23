@@ -35,7 +35,7 @@ function DashboardContent() {
       name: program, score: dashboard.isLoading.ProgramInfor ? 'Loading...' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0), status: dashboard.isLoading.ProgramInfor ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 75 ? 'strengthen' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 55 ? 'maintain' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(content_health_score)*100"]?.toFixed(0) >= 35 ? 'review' : 'at-risk', slot: '',
       ret: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) || 'nodata', rv: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) || 'nodata', li: dashboard.isLoading.ProgramInfor ? 0 : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) || 'nodata', retColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(watch_time_efficiency)"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', rvColor: dashboard.isLoading.ProgramInfor ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(return_viewer_rate_14days)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)', liColor: dashboard.isLoading.ProgramInfor ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 75 ? 'var(--green)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 55 ? 'var(--cyan)' : dashboard?.ProgramInfor?.data?.[0]?.["AVG(lead_in_effect)*100"]?.toFixed(0) >= 35 ? 'var(--amber)' : 'var(--red)',
       insight: '',
-      curveTitle: `Drop-off Curve theo thời lượng · ${program}`,
+      curveTitle: `📉 Drop-off Curve theo thời lượng · ${program}`,
       curveNote: '',
       episodes: dashboard.isLoading.WatchTimeEfficiencyLast8Weeks ? [0, 0, 0, 0, 0, 0, 0, 0] : dashboard?.WatchTimeEfficiencyLast8Weeks?.data?.map((item: any) => (item["AVG(Watch Time Efficiency)"] || 0).toFixed(1)),
       epNote: '',
@@ -1308,6 +1308,11 @@ function DashboardContent() {
             <div className="section-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
                 <div className="mini-kpi">
+                  <div className="mk-label">Chương trình giữ chân <span style={{color: 'rgb(0, 229, 160)', fontWeight: '700'}}>tốt nhất</span></div>
+                  <div className="mk-val green">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Chương trình giữ tốt nhất"]}</div>
+                  {/* <div className="mk-sub">Bleed chỉ 7% — anchor mạnh nhất</div> */}
+                </div>
+                <div className="mini-kpi">
                   <div className="mk-label">Chương trình giữ chân <span style={{color: 'rgb(255, 61, 90)', fontWeight: '700'}}>thấp nhất</span></div>
                   <div className="mk-val red">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.['Chương trình giữ chân thấp nhát']}</div>
                   {/* <div className="mk-sub">Bleed 88% — mất gần hết audience sau chương trình</div> */}
@@ -1316,11 +1321,6 @@ function DashboardContent() {
                   <div className="mk-label" title='Tỷ lệ khán giả của chương trình này kế thừa/thu hút khán giả từ chương trình ngay trước đó'>Lead-in TB toàn kênh</div>
                   <div className={`mk-val ${dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) >= 75 ? 'green' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0) > 50 ? 'amber' : 'red'}`}>{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Lead-in TB toàn kênh"]?.toFixed(0)}%</div>
                   {/* <div className="mk-sub">↑ +3pp vs tuần trước</div> */}
-                </div>
-                <div className="mini-kpi">
-                  <div className="mk-label">Chương trình giữ chân <span style={{color: 'rgb(0, 229, 160)', fontWeight: '700'}}>tốt nhất</span></div>
-                  <div className="mk-val green">{dashboard.isLoading.AudienceFullChannel ? 'Loading...' : dashboard.AudienceFullChannel?.data?.[0]?.["Chương trình giữ tốt nhất"]}</div>
-                  {/* <div className="mk-sub">Bleed chỉ 7% — anchor mạnh nhất</div> */}
                 </div>
                 <div className="mini-kpi">
                   <div className="mk-label" title='Số chương trình At risk'>Số chương trình <span style={{color: 'rgb(255, 61, 90)', fontWeight: '700'}}>AT RISK</span></div>
@@ -1484,7 +1484,7 @@ function DashboardContent() {
 
               {/* <!-- Retention Curve --> */}
               <div className="chart-wrap">
-                <div className="chart-title" id="curve-title" title='Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình'>Drop-off Curve · Rạng Đông · Tập mới nhất · 60 phút</div>
+                <div style={{fontWeight: 700, fontFamily: 'var(--display)', color: 'var(--text)'}} className="chart-title" id="curve-title" title='Tỷ lệ khán giả rời bỏ chương trình theo từng phút. Chỉ bao gồm các khán giả vào xem trong những phút đầu tiên của chương trình'>Drop-off Curve · Rạng Đông · Tập mới nhất · 60 phút</div>
                 <svg width="100%" height="180" viewBox="0 0 700 180" preserveAspectRatio="none" id="retention-curve">
                   <defs>
                     <linearGradient id="rg1" x1="0" y1="0" x2="0" y2="1">
