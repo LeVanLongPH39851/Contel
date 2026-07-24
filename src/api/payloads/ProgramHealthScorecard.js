@@ -22,11 +22,6 @@ export const ProgramHealthScorecard = {
                         "val": [
                             "1 weeks"
                         ]
-                    },
-                    {
-                        "col": "start_of_week",
-                        "op": "TEMPORAL_RANGE",
-                        "val": "No filter"
                     }
                 ],
                 "extras": {
